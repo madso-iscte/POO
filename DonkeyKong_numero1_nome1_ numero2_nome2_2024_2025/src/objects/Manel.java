@@ -34,4 +34,8 @@ public class Manel implements ImageTile {
 	
 	//teste 1233333
 	//teste
+	
+	public int soma(int d,int e) {
+		return d+e;
+	}
 }
