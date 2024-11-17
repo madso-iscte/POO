@@ -32,8 +32,4 @@ public class Manel implements ImageTile {
 		position = position.plus(Direction.random().asVector());	
 	}
 	
-	//teste 1233333
-	//teste
-	
-	//push com sucesso
 }
