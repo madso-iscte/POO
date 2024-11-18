@@ -28,8 +28,9 @@ public class Manel implements ImageTile {
 		return 1;
 	}
 
-	public void move() {
-		position = position.plus(Direction.random().asVector());	
+	//providencia uma direcao especifica como argumento
+	public void move(Direction direction) {
+		position = position.plus(direction.asVector());	
 	}
 	
 }
