@@ -27,11 +27,6 @@ public class Manel extends GameElement implements ImageTile {
 		return position;
 	}
 	
-	
-	public Point2D getNewManelPosition() {
-		return position;
-	}
-
 	@Override
 	public int getLayer() {
 		// TODO Auto-generated method stub

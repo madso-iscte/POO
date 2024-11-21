@@ -62,15 +62,16 @@ public abstract class GameElement implements ImageTile {
 
 
 	
-	public static GameElement createElement(char key, Point2D position, Room r, int i, int j ) {
+	public static GameElement createElement(char key, Point2D position) {
 		switch (key) {
 		case 'W':
 			return new Wall(position);
 		case ' ':
 			return new Floor(position);
 		case 'H':
-			r.setHeroStartingPosition(i, j);
-			return new Manel.getInstance();
+			Manel manel = Manel.getPosition(position);
+		    r.setHeroStartingPosition(position);
+		    return manel;
 		case 'S':
 			return new Stairs(position);
 		case 's':

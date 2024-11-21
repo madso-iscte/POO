@@ -34,8 +34,8 @@ public class Room {
 		return filename;
 	}
 	
-	public Point2D setHeroStartingPosition(int i, int j) {
-		return new Point2D(i,j);
+	public void setHeroStartingPosition(Point2D position) {
+		this.heroStartingPosition = position;
 	}
 
 	
