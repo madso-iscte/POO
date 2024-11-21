@@ -42,6 +42,10 @@ public abstract class GameElement implements ImageTile {
 	public void setPosition(Point2D position) {
 		this.position = position;
 	}
+	
+	public void setPosition(int i, int j) {
+		position = new Point2D(i,j);
+	}
 
 	public String getImageName() {
 		return imageName;
@@ -69,9 +73,7 @@ public abstract class GameElement implements ImageTile {
 		case ' ':
 			return new Floor(position);
 		case 'H':
-			Manel manel = Manel.getPosition(position);
-		    r.setHeroStartingPosition(position);
-		    return manel;
+			return new Manel(position);
 		case 'S':
 			return new Stairs(position);
 		case 's':

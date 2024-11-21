@@ -10,21 +10,22 @@ import pt.iscte.poo.gui.ImageGUI;
 import pt.iscte.poo.utils.Direction;
 import objects.*;
 
-public class Room {
+public class Room{
 	
-	private Point2D heroStartingPosition;
+	private Point2D heroStartingPosition = new Point2D(1,1);
 	private Manel manel;
 
 	
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	private String filename; //nome do ficheiro do nivel
-	private List<Point2D> elementos;
+	private List<GameElement> objects;
+	private GameEngine engine;
 
 	
 	public Room(String filename) {
-		//manel = new Manel(heroStartingPosition);
-		//ImageGUI.getInstance().addImage(manel);
+		manel = new Manel(heroStartingPosition);
+		ImageGUI.getInstance().addImage(manel);
 		//ImageGUI.getInstance().addImage(new Wall());
 		this.filename = filename;
 
@@ -37,7 +38,19 @@ public class Room {
 	public void setHeroStartingPosition(Point2D position) {
 		this.heroStartingPosition = position;
 	}
+	
+	private void setEngine(GameEngine engine) {
+		this.engine = engine;
+	}
+	
+	public void addObject(GameElement obj) {
+		objects.add(obj);
+		engine.update();
+	}
 
+	public List<GameElement> getObjects(){
+		return objects;
+	}
 	
 	//devolve o numero do nivel
 	public int getLevelNumber() {
@@ -93,6 +106,12 @@ public class Room {
 					}
 					if (element == 'S') {
 						GameEngine.getInstance().addGameElement(new Stairs(position));
+					}
+					if (element == 'G') {
+						GameEngine.getInstance().addGameElement(new Gorilla(position));
+					}
+					if (element == '0') {
+						GameEngine.getInstance().addGameElement(new Door(position));
 					}
 					//if (element == )
 					//falta adicionar os elementos do nivel
