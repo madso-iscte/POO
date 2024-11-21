@@ -1,22 +1,104 @@
 package pt.iscte.poo.game;
 
+import objects.GameElement;
 import objects.Manel;
-import objects.Wall;
-import pt.iscte.poo.gui.ImageGUI;
+import java.io.File;
+import java.util.List;
+import java.util.Scanner;
 import pt.iscte.poo.utils.Point2D;
+import pt.iscte.poo.gui.ImageGUI;
 import pt.iscte.poo.utils.Direction;
+import objects.*;
 
 public class Room {
 	
-	private Point2D heroStartingPosition = new Point2D(1, 1);
+	private Point2D heroStartingPosition;
 	private Manel manel;
+
 	
-	public Room() {
-		manel = new Manel(heroStartingPosition);
-		ImageGUI.getInstance().addImage(manel);
-		ImageGUI.getInstance().addImage(new Wall());
+	public static final int GRID_HEIGHT = 10;
+	public static final int GRID_WIDTH = 10;
+	private String filename; //nome do ficheiro do nivel
+	private List<Point2D> elementos;
+
+	
+	public Room(String filename) {
+		//manel = new Manel(heroStartingPosition);
+		//ImageGUI.getInstance().addImage(manel);
+		//ImageGUI.getInstance().addImage(new Wall());
+		this.filename = filename;
 
 	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public Point2D setHeroStartingPosition(int i, int j) {
+		return new Point2D(i,j);
+	}
+
+	
+	//devolve o numero do nivel
+	public int getLevelNumber() {
+		String[] temp = filename.split("\\."); //ta mal
+		char level = temp[0].charAt(temp[0].length() - 1);
+		int nrLevel = Character.getNumericValue(level);
+		return nrLevel;
+	}
+
+	
+	// transforma o ficheiro do nivel numa matriz de caracteres
+		static private char[][] fileToMatrix(String level) {
+			File file = new File("room" + level);
+			char[][] room = new char[GRID_WIDTH][GRID_HEIGHT];
+			try {
+				Scanner scannerFile = new Scanner(file);
+				int i = 0;
+				while (scannerFile.hasNextLine()) {
+					String line = scannerFile.nextLine();
+					char[] characters = line.toCharArray();
+					for (int j = 0; j < GRID_WIDTH; j++) {
+						room[i][j] = characters[j];
+					}
+					i++;
+				}
+				scannerFile.close();
+			} catch (Exception e) {
+				System.err.println("File Not Found");
+			}
+			return room;
+		}
+
+		
+
+		//le a matriz de caracteres, cria e adiciona o GameElement a lista da GameEngine
+		public void readLevel() {
+			char[][] room = fileToMatrix(filename);
+			for (int x = 0; x < GRID_HEIGHT; x++)
+				for (int y = 0; y < GRID_HEIGHT; y++) {
+					char element = room[y][x];
+					Point2D position = new Point2D(x, y);
+					// if E setBobcat()
+					GameElement e = GameElement.createElement(element, position);
+					GameEngine.getInstance().addGameElement(e);
+					if (element == 'H') {
+						GameEngine.getInstance().setManel((Manel) e);
+					}
+					if (element == 'W') {
+						GameEngine.getInstance().addGameElement(new Wall(position));
+					}
+					if (element == ' ') {
+						GameEngine.getInstance().addGameElement(new Floor(position));
+					}
+					if (element == 'S') {
+						GameEngine.getInstance().addGameElement(new Stairs(position));
+					}
+					//if (element == )
+					//falta adicionar os elementos do nivel
+				}
+			}
+		
 
 	//delimita o campo de jogo
 	private boolean isPositionValid(Point2D position) {
