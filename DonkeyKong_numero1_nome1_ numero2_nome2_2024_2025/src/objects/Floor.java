@@ -3,9 +3,10 @@ package objects;
 import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Point2D;
 
-public class Floor implements ImageTile {
+public class Floor extends GameElement implements ImageTile, Intransposable {
 
-	public Floor() {
+	public Floor(Point2D point2d) {
+		super(point2d, "Floor", 0);
 	}
 
 	@Override
@@ -19,9 +20,8 @@ public class Floor implements ImageTile {
 	}
 
 	@Override
-	public Point2D getPosition() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isTransposable() {
+		return true;
 	}
 
 
