@@ -123,7 +123,7 @@ public class GameEngine implements Observer {
 	}
 	
 	private void loadGame() {
-		File[] files = new File("./rooms").niveis;
+	//	File[] files = new File("./rooms").niveis;
 		
 	}
 	
