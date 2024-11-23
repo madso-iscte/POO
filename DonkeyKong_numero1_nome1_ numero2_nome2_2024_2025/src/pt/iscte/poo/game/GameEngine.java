@@ -7,7 +7,10 @@ import pt.iscte.poo.utils.Direction;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import objects.Manel;
 import objects.GameElement;
 import pt.iscte.poo.game.Room;
@@ -15,27 +18,41 @@ import pt.iscte.poo.utils.Point2D;
 
 public class GameEngine implements Observer {
 	
+
+	private GameEngine engine;
 	private String filename;
-	private Room currentRoom = new Room(filename);
+	private Room currentRoom = new Room(Inicial_room, engine);
 	private int lastTickProcessed = 0;
 	
-	private static final String Inicial_room = "room0.txt";
+	private static final String Inicial_room = "rooms/room0.txt";
 	
 	//nao sei se é necessario
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	
 	private static GameEngine INSTANCE;
+	
 	private ImageGUI gui;
-	private List<GameElement> list;
+	
+	//private List<GameElement> list = new ArrayList<>();;	
 	private List<Room> niveis;
-	private Point2D posicaoInicialManel;
+	
+	
+	private List<GameElement> list = new ArrayList<>(); 
+	private Map<Point2D, List<GameElement>> objectsByPosition = new HashMap<>();
+	
+	
 	private Manel manel;
 	private Room nivelAtual;
 	
 	public GameEngine() {
-		ImageGUI.getInstance().update();
+		gui = ImageGUI.getInstance(); 
 		list = new ArrayList<>();
+		gui.update();
+	}
+	
+	public Room getCurrentRoom() {
+		return currentRoom;
 	}
 	
 	public ImageGUI getGui() {
@@ -49,6 +66,7 @@ public class GameEngine implements Observer {
 	public Room getNivel() {
 		return nivelAtual;
 	}
+		
 
 	public void setManel(Manel manel) {
 		this.manel = manel;
@@ -62,70 +80,88 @@ public class GameEngine implements Observer {
 	}
 	
 	
-	public void addGameElement(GameElement e) {
-		list.add(e);
-		gui.addImage(e);
-	}
+//	public void addGameElement(GameElement e) {	
+//		list.add(e);  // Adiciona o elemento à lista interna
+//	    gui.addImage(e);  // Atualiza a interface gráfica
+//	    gui.update();  // Refresca a tela
+//	} 
 	
-	//remove o GameElement recebido
+	public void addGameElement(GameElement element) {
+		Point2D position = element.getPosition(); 
+		list.add(element);
+		if (!objectsByPosition.containsKey(position)) { 
+			objectsByPosition.put(position, new ArrayList<>()); 
+			}
+		objectsByPosition.get(position).add(element); 
+		gui.addImage(element);
+		System.out.println("Added element: " + element.getName() + " at " + position);
+		gui.update();
+    }
+	
 	public void removeGameElement(GameElement e) {
 		list.remove(e);
 		gui.removeImage(e);
+		gui.update();
 	}
 
-	//remove todos os GameElement da lista
 	public void removeAllGameElements() {
 		for (GameElement e : list) {
 			gui.removeImage(e);
 		}
 		list.removeAll(list);
+		gui.update();
 	}
-
-
+	
 
 	public List<GameElement> getGameElement(Point2D position) {
-		List<GameElement> list = new ArrayList<>();
+		List<GameElement> result = new ArrayList<>();
 		for (GameElement element : list) {
 			if (element.getPosition().equals(position)) {
 				list.add(element);
 			}
 		}
-		return list;
+		return result;
 	}
 	
 	
 	public void start() {
-
-		gui = ImageGUI.getInstance(); // 1. obter instancia ativa de ImageGUI
-		gui.setSize(GRID_HEIGHT, GRID_WIDTH); // 2. configurar as dimensoes
-		gui.registerObserver(this); // 3. registar o objeto ativo GameEngine como observador da GUI
-		gui.go(); // 4. lancar a GUI
-		
-		// Criar o cenario de jogo
-		createLevel(new Room(Inicial_room));// cria o mapa de um nivel especifico
-
-		gui.setStatusMessage("DonkeyKong");
-		gui.update();
+	    gui = ImageGUI.getInstance();	    
+	    gui.registerObserver(this);
+	    gui.go();
+	    System.out.println("GUI inicializada!");
+	    Room initialRoom = Room.readLevel(Inicial_room); // Lê a sala inicial
+	    createLevel(initialRoom);
+	    gui.setStatusMessage("DonkeyKong!");
+	    gui.update();
 	}
 	
 	
+//	public void loadRoom(Room room) {
+//		this.currentRoom = room;
+//		room.setEngine(this);
+//		for(GameElement element : list) {
+//			addGameElement(element);
+//		}
+//		gui.update();
+//		
+//	}
 	
-	private void createLevel(Room n) {
-		n.readLevel();
-		nivelAtual = n;
-		// tileList = nivelAtual.getTileList();
-	}
-
 	
-	public void restartLevel() {
-		removeAllGameElements();
-		createLevel(nivelAtual);
+	private void createLevel(Room room) {
+		 this.currentRoom = room;
+		    room.setEngine(this);
+		    // Adiciona todos os elementos da sala ao jogo
+		    for (GameElement element : room.getList()) {
+		        addGameElement(element); // Adiciona ao ImageGUI
+		    }
+		    gui.update();
 	}
+//	
+//	public void restartLevel() {
+//		removeAllGameElements();
+//		createLevel(nivelAtual);
+//	}
 	
-	private void loadGame() {
-	//	File[] files = new File("./rooms").niveis;
-		
-	}
 	
 	@Override
 	public void update(Observed source) {
@@ -137,7 +173,7 @@ public class GameEngine implements Observer {
 				System.out.println("Direction! ");
 				//cria uma direcao para aplicar no moveManel
 				Direction direction = Direction.directionFor(k);
-	            currentRoom.moveManel(direction); 
+				currentRoom.moveManel(direction); 
 			}
 		}
 		int t = ImageGUI.getInstance().getTicks();
