@@ -5,15 +5,165 @@ import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import objects.Manel;
+import objects.Wall;
+import objects.GameElement;
+import pt.iscte.poo.game.Room;
+import pt.iscte.poo.utils.Point2D;
+
 public class GameEngine implements Observer {
 	
-	private Room currentRoom = new Room();
+	private String filename;
+	private Room currentRoom = new Room(filename);
 	private int lastTickProcessed = 0;
+	
+	private static final String Inicial_room = "room0.txt";
+	
+	//nao sei se é necessario
+	public static final int GRID_HEIGHT = 1000;
+	public static final int GRID_WIDTH = 1000;
+	
+	private static GameEngine INSTANCE;
+	private static ImageGUI gui;
+	private List<GameElement> list;
+	private List<Room> niveis;
+	private Point2D posicaoInicialManel;
+	private Manel manel;
+	private Room nivelAtual;
 	
 	public GameEngine() {
 		ImageGUI.getInstance().update();
+		list = new ArrayList<>();
+	}
+	
+	public ImageGUI getGui() {
+		return gui;
+	}
+	
+	public Manel getManel() {
+		return manel;
 	}
 
+	public Room getNivel() {
+		return nivelAtual;
+	}
+
+	public void setManel(Manel manel) {
+		this.manel = manel;
+	}
+	
+	//singleton
+	public static GameEngine getInstance() {
+		if (INSTANCE == null)
+			return INSTANCE = new GameEngine();
+		return INSTANCE;
+	}
+	
+	
+	public void addGameElement(GameElement e) {
+	    if (e == null) {
+	        System.err.println("Erro: Elemento nulo passado para addGameElement!");
+	        return;
+	    }
+	    if (e.getPosition() == null) {
+	        System.err.println("Erro: Tentativa de adicionar elemento com posição nula! Nome do elemento: " + e.getName());
+	        return;
+	    }
+	    list.add(e); // Adiciona o elemento à lista do jogo
+	    gui.addImage(e); // Adiciona o elemento à interface gráfica
+	    System.out.println("Elemento adicionado à GUI: " + e.getName() + " na posição " + e.getPosition());
+	}
+
+
+	
+	//remove o GameElement recebido
+	public void removeGameElement(GameElement e) {
+		list.remove(e);
+		gui.removeImage(e);
+	}
+
+	//remove todos os GameElement da lista
+	public void removeAllGameElements() {
+		for (GameElement e : list) {
+			gui.removeImage(e);
+		}
+		list.removeAll(list);
+	}
+
+
+
+	public List<GameElement> getGameElement(Point2D position) {
+		List<GameElement> list = new ArrayList<>();
+		for (GameElement element : list) {
+			if (element.getPosition().equals(position)) {
+				list.add(element);
+			}
+		}
+		return list;
+	}
+	
+	
+	private boolean gameStarted = false;
+
+	public void start() {
+	    if (gameStarted) {
+	        System.err.println("O jogo já foi iniciado!");
+	        return;
+	    }
+	    gameStarted = true;
+	    
+	    gui = getGuiInstance();
+	    gui.setSize(GRID_WIDTH, GRID_HEIGHT);
+	    gui.registerObserver(this);
+	    gui.go();
+
+	    createLevel(new Room(Inicial_room));
+	    gui.setStatusMessage("DonkeyKong");
+	    gui.update();
+	}
+
+	
+	public static ImageGUI getGuiInstance() {
+	    if (gui == null) {
+	        gui = ImageGUI.getInstance();
+	    }
+	    return gui;
+	}
+
+
+
+
+
+	
+	
+	
+	private void createLevel(Room n) {
+	    if (gui == null) {
+	        System.err.println("Erro: GUI não foi inicializada antes de criar o nível!");
+	        return; // Impede a criação do nível
+	    }
+
+	    n.readLevel(); // Lê os elementos do arquivo e adiciona-os ao motor do jogo
+	    nivelAtual = n; // Define o nível atual
+	    System.out.println("Nível criado com sucesso!");
+	}
+
+
+
+	
+	public void restartLevel() {
+		removeAllGameElements();
+		createLevel(nivelAtual);
+	}
+	
+	private void loadGame() {
+	//	File[] files = new File("./rooms").niveis;
+		
+	}
+	
 	@Override
 	public void update(Observed source) {
 		

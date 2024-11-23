@@ -1,27 +1,29 @@
 package objects;
 
-import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Point2D;
 
-public class Wall implements ImageTile {
+public class Wall extends GameElement {
 
-	public Wall() {
-	}
+    // Construtor para inicializar a posição e o nome da imagem
+    public Wall(Point2D position) {
+        super(position, "Wall", 1); // "wall" deve corresponder ao nome da imagem do sprite
+    }
 
-	@Override
-	public String getName() {
-		return "Wall";
-	}
+    // Sobrescreve o método getPosition para adicionar verificação de nulo
+    @Override
+    public Point2D getPosition() {
+        if (super.getPosition() == null) {
+            System.err.println("Erro: posição nula para o elemento Wall.");
+        }
+        return super.getPosition();
+    }
 
-	@Override
-	public int getLayer() {
-		return 1;
-	}
+    // Sobrescreve o método getName (opcional, já é definido na classe base)
+    @Override
+    public String getName() {
+        return "Wall";
+    }
+}
 
-	@Override
-	public Point2D getPosition() {
-		return new Point2D(5, 5);
-	}
 
 	
-}

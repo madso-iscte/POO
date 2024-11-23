@@ -101,7 +101,7 @@ public class ImageGUI extends Observed {
 	
 	private int ticks = 0; // added jul 2024
 
-    private ImageGUI() {
+    public ImageGUI() {
         init();
     }
 

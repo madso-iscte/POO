@@ -20,5 +20,10 @@ public class Observed {
 		}
 	}
 
+	public String getKeyCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }
