@@ -19,7 +19,7 @@ public class Room{
 	
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	private String filename; //nome do ficheiro do nivel
+	private static String filename; //nome do ficheiro do nivel
 	private List<GameElement> objects = new ArrayList<>();
 	private GameEngine engine;
 
@@ -89,7 +89,7 @@ public class Room{
 		
 
 		//le a matriz de caracteres, cria e adiciona o GameElement a lista da GameEngine
-	public void readLevel() {
+	public static Room readLevel() {
 	    String[][] room = fileToMatrix(filename); // Lê matriz de strings
 	    for (int y = 0; y < GRID_HEIGHT; y++) {
 	        for (int x = 0; x < GRID_WIDTH; x++) {
