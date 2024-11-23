@@ -16,7 +16,7 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable {
 
 	@Override
 	public int getLayer() {
-		return 0;
+		return 1;
 	}
 
 	@Override
