@@ -23,8 +23,8 @@ public class GameEngine implements Observer {
 	private static final String Inicial_room = "room0.txt";
 	
 	//nao sei se é necessario
-	public static final int GRID_HEIGHT = 10;
-	public static final int GRID_WIDTH = 10;
+	public static final int GRID_HEIGHT = 1000;
+	public static final int GRID_WIDTH = 1000;
 	
 	private static GameEngine INSTANCE;
 	private static ImageGUI gui;
@@ -115,11 +115,12 @@ public class GameEngine implements Observer {
 	    }
 	    gameStarted = true;
 	    
-	    gui = ImageGUI.getInstance();
+	    gui = getGuiInstance();
 	    gui.setSize(GRID_WIDTH, GRID_HEIGHT);
-	    Room initialRoom = Room.readLevel();
+	    gui.registerObserver(this);
+	    gui.go();
 
-	    createLevel(Inicial_room);
+	    createLevel(new Room(Inicial_room));
 	    gui.setStatusMessage("DonkeyKong");
 	    gui.update();
 	}
@@ -139,14 +140,14 @@ public class GameEngine implements Observer {
 	
 	
 	
-	private void createLevel(String inicialRoom) {
+	private void createLevel(Room n) {
 	    if (gui == null) {
 	        System.err.println("Erro: GUI não foi inicializada antes de criar o nível!");
 	        return; // Impede a criação do nível
 	    }
 
-	    inicialRoom.readLevel(); // Lê os elementos do arquivo e adiciona-os ao motor do jogo
-	    nivelAtual = inicialRoom; // Define o nível atual
+	    n.readLevel(); // Lê os elementos do arquivo e adiciona-os ao motor do jogo
+	    nivelAtual = n; // Define o nível atual
 	    System.out.println("Nível criado com sucesso!");
 	}
 

@@ -89,7 +89,7 @@ public class Room{
 		
 
 		//le a matriz de caracteres, cria e adiciona o GameElement a lista da GameEngine
-	public static Room readLevel() {
+	public static void readLevel() {
 	    String[][] room = fileToMatrix(filename); // Lê matriz de strings
 	    for (int y = 0; y < GRID_HEIGHT; y++) {
 	        for (int x = 0; x < GRID_WIDTH; x++) {
