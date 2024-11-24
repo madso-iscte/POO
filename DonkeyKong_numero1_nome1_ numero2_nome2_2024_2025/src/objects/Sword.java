@@ -1,9 +1,10 @@
 package objects;
 
 import pt.iscte.poo.utils.Point2D;
-import pt.iscte.poo.gui.ImageTile;
-import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.game.GameEngine;
+import pt.iscte.poo.gui.ImageTile;
+//import pt.iscte.poo.utils.Direction;
+//import pt.iscte.poo.game.GameEngine;
 
 public class Sword extends GameElement implements ImageTile, Interactable{
 	
@@ -29,18 +30,13 @@ public class Sword extends GameElement implements ImageTile, Interactable{
 	}
 	
 	@Override
-	public void interact(GameElement ge, Point2D position, Direction direction) {
-		if(ge instanceof Manel) {
-			Manel manel = (Manel) ge;
-			manel.setDamage(manel.getDamage()+ getSwordDamage());
-			manel.setHasSword(true);
-			System.out.println("Jogador apanhou a espada! Dano aumenta para 50!");
-			
-			GameEngine.getInstance().getCurrentRoom().removeElementAt(position);
-			
-			
-			
+	public void interact(Manel manel) {
+		manel.setDamage(manel.getDamage() + getSwordDamage());
+		manel.setHasSword(true);
+		System.out.println("Manel apanhou a espada! Dano aumenta para 50!");
+		
+		GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
 		}
-	}
-	
 }
+	
+

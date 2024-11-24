@@ -264,11 +264,11 @@ public class Room{
 			if (Room.isPositionValid(newPosition)) { 
 				GameElement nextElement = getElementAt(newPosition);
 				if (nextElement instanceof Intransposable && !((Intransposable) nextElement).isTransposable()) {
-					System.out.println("Intransposable Object"+ nextElement.getName());					
+					System.out.println("Intransposable Object"+ nextElement.getName());
 				} else {
 					manel.move(direction);
-					GameElement floor = new Floor(oldPosition);
-					addGameElement(floor);
+					//GameElement floor = new Floor(oldPosition);
+					//addGameElement(floor);
 				}
 			} 
 		} 
