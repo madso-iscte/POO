@@ -1,6 +1,7 @@
 package pt.iscte.poo.game;
 
 import pt.iscte.poo.gui.ImageGUI;
+
 import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import objects.Gorilla;
 import objects.Manel;
 import objects.GameElement;
 import pt.iscte.poo.game.Room;
@@ -176,9 +178,19 @@ public class GameEngine implements Observer {
 				currentRoom.moveManel(direction); 
 			}
 		}
+		
+				
+		
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
+			Gorilla gorilla = (Gorilla) list.stream()
+					.filter(element -> element instanceof Gorilla)
+					.findFirst()
+					.orElse(null);
+			if(gorilla != null) {
+				gorilla.moveRandomly();
+			}
 		}
 		ImageGUI.getInstance().update();
 	}

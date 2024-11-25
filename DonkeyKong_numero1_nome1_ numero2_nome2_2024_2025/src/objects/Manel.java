@@ -7,11 +7,11 @@ import pt.iscte.poo.utils.Point2D;
 //import pt.iscte.poo.utils.*;
 import pt.iscte.poo.game.*;
 
-public class Manel extends GameElement implements ImageTile {
+public class Manel extends GameElement implements ImageTile, MovableObject, Intransposable {
 
 	private Point2D position;
 	private int vida = 100;
-	private int damage = 25; 
+	private int damage = 90; 
 	private boolean hasBife = false;
 	private boolean hasSword = false;
 	
@@ -34,6 +34,11 @@ public class Manel extends GameElement implements ImageTile {
 	public int getLayer() {
 		// TODO Auto-generated method stub
 		return 2;
+	}
+	
+	@Override
+	public boolean isTransposable() {
+		return false;
 	}
 	
 	public int getVida() {
@@ -63,18 +68,26 @@ public class Manel extends GameElement implements ImageTile {
 	}
 	
 	
-//	public boolean hasBife() {
-//		return hasBife;
-//	}
-//	
-//	public boolean hasSword() {
-//		return hasSword;
-//	}
+	public boolean hasBife() {
+		return hasBife;
+	}
+	
+	public boolean hasSword() {
+		return hasSword;
+	}
 	
 	public void setHasSword(boolean hasSword) {
 		this.hasSword = hasSword;
 	}
 	
+	public void attack(Gorilla gorilla) {
+		if(hasSword) {
+			gorilla.takeDamage(damage);
+		} else {
+			gorilla.takeDamage(damage);
+		}
+		System.out.println("Manel atacou Gorilla! Dano causado: " + damage);
+	}
 	
 	//providencia uma direcao especifica como argumento
 	public void move(Direction direction) {
