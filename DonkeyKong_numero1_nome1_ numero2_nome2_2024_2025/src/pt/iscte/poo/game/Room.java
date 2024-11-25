@@ -197,8 +197,7 @@ public class Room{
         if (parts.length > 0) {
             try {
                 int roomNumber = Integer.parseInt(parts[0]);
-                // Exemplo: Armazena o número do nível (implementação fictícia)
-                //r.setLevelNumber(roomNumber); 
+                r.setLevelNumber(roomNumber); 
             } catch (NumberFormatException e) {
                 System.err.println("Erro ao interpretar o número da sala.");
             }
@@ -206,8 +205,7 @@ public class Room{
 
         if (parts.length > 1) {
             String nextRoomFile = parts[1];
-            // Exemplo: Define o próximo ficheiro de sala (implementação fictícia)
-            //r.setNextRoomFilename(nextRoomFile);
+            r.setNextRoomFilename(nextRoomFile);
         }			
 	}
 
@@ -222,8 +220,8 @@ public class Room{
 		
 	//delimita o campo de jogo
 	public static boolean isPositionValid(Point2D position) {
-	    int mapWidth = 10;
-	    int mapHeight = 10;
+	    int mapWidth = GRID_WIDTH;
+	    int mapHeight = GRID_HEIGHT;
 
 	    return position.getX() >= 0 && position.getX() < mapWidth &&
 	           position.getY() >= 0 && position.getY() < mapHeight;
@@ -236,35 +234,53 @@ public class Room{
 				return element;
 			}
 		}
-		return new Floor(position);
+		return null;
 	}
 	
 	public void removeElementAt(Point2D position) {
 		GameElement element = getElementAt(position);
 		if (element != null) { 
 			list.remove(element); 
-			objectsByPosition.get(position).remove(element);
-			if (objectsByPosition.get(position).isEmpty()) {
-				objectsByPosition.remove(position);
-				} 
+			
+			List<GameElement> elementsAtPosition = objectsByPosition.get(position);
+			if (elementsAtPosition == null) { 
+				elementsAtPosition = new ArrayList<>();
+				objectsByPosition.put(position, elementsAtPosition); 
+			}
+			
+			elementsAtPosition.remove(element); 
+			if (elementsAtPosition.isEmpty()) { 
+				objectsByPosition.remove(position); 
+				}
+			
 			gui.removeImage(element);
 			gui.update();
 		}
 	}
+	
 	
 	public void moveManel(Direction direction) {
 		Manel manel = (Manel) list.stream()
 				.filter(element -> element instanceof Manel)
 				.findFirst() 
 				.orElse(null); 
+		
 		if (manel != null) { 
-			Point2D oldPosition = manel.getPosition();
+			//Point2D oldPosition = manel.getPosition();
 			Point2D newPosition = manel.getPosition().plus(direction.asVector());
 			
 			if (Room.isPositionValid(newPosition)) { 
 				GameElement nextElement = getElementAt(newPosition);
-				if (nextElement instanceof Intransposable && !((Intransposable) nextElement).isTransposable()) {
+				
+				if(nextElement instanceof Gorilla) {
+					System.out.println("Manel está atacando o Gorilla");
+					manel.attack((Gorilla) nextElement) ;
+				} else if (nextElement instanceof Intransposable && !((Intransposable) nextElement).isTransposable()) {
 					System.out.println("Intransposable Object"+ nextElement.getName());
+				} else if(nextElement instanceof Interactable) {
+					((Interactable) nextElement).interact(manel);
+					manel.move(direction);
+					//gui.removeImage(getElementAt(oldPosition));
 				} else {
 					manel.move(direction);
 					//GameElement floor = new Floor(oldPosition);

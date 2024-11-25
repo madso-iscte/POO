@@ -8,7 +8,7 @@ import pt.iscte.poo.gui.ImageTile;
 
 public class Sword extends GameElement implements ImageTile, Interactable{
 	
-	private int damage = 25;
+	private int damage = 15;
 	
 	public Sword(Point2D point2d, int damage) {
 		super(point2d, "Sword", 0);
@@ -31,11 +31,13 @@ public class Sword extends GameElement implements ImageTile, Interactable{
 	
 	@Override
 	public void interact(Manel manel) {
-		manel.setDamage(manel.getDamage() + getSwordDamage());
+		manel.setDamage(getSwordDamage());
 		manel.setHasSword(true);
-		System.out.println("Manel apanhou a espada! Dano aumenta para 50!");
 		
 		GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
+		GameEngine.getInstance().getGui().setStatusMessage("Damage has increased by 15!");
+		
+		System.out.println("Damage atual: " + manel.getDamage());
 		}
 }
 	

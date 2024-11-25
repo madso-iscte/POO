@@ -6,7 +6,7 @@ import pt.iscte.poo.gui.ImageTile;
 public class Door extends GameElement implements ImageTile, Intransposable {
 
 	public Door(Point2D point2d) {
-		super(point2d, "DoorClosed", 0);
+		super(point2d, "DoorClosed", 1);
 	}
 
 	@Override

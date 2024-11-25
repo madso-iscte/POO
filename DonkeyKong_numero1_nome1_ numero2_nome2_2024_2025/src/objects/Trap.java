@@ -21,7 +21,7 @@ public class Trap extends GameElement implements ImageTile, Intransposable {
 
 	@Override
 	public boolean isTransposable() {
-		return true;
+		return false;
 	}
 
 
