@@ -45,7 +45,10 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 		this.position = position;
 	}
 	
-	
+	public boolean temVida() {
+		return this.getVida()>0;
+	}
+		
 	public int getVida() {
 		return vida;
 	}
@@ -81,22 +84,25 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 	}
 	
 	public void attack(Manel manel) {
-		manel.setVida(manel.getVida()-this.damage);
-		GameEngine.getInstance().getGui().setStatusMessage("Manel was attacked! Life: " + manel.getVida() + "/100");
-		System.out.println("Gorilla atacou Manel! Dano causado: " + damage);
-		if(manel.getVida()<=0) {
-			manel.semVida();
+		if(temVida()) {
+			manel.setVida(manel.getVida()-this.damage);
+			GameEngine.getInstance().getGui().setStatusMessage("Manel was attacked! Life: " + manel.getVida() + "/100");
+			System.out.println("Gorilla atacou Manel! Dano causado: " + damage);
+			if(manel.getVida()<=0) {
+				manel.semVida();
+			}
 		}
 	}
 	
 	public void lauchFire() {
 		Point2D firePosition = new Point2D(position.getX(),position.getY()+1);
-		if(Room.isPositionValid(firePosition)) {
-			Fire fire = new Fire(firePosition);
-			GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
-			System.out.println("Fogo!");
+		if(temVida())
+			if(Room.isPositionValid(firePosition)) {
+				Fire fire = new Fire(firePosition);
+				GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
+				System.out.println("Fogo!");
+			}
 		}
-	}
 	
 	
 	

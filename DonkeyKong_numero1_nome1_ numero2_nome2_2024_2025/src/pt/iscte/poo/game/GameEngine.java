@@ -181,9 +181,7 @@ public class GameEngine implements Observer {
 				currentRoom.moveManel(direction); 
 			}
 		}
-		
-				
-		
+								
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
@@ -194,23 +192,25 @@ public class GameEngine implements Observer {
 					.orElse(null);
 			if(gorilla != null) {
 				gorilla.moveRandomly();
-				if (new Random().nextInt(100) < 20) {
+				if (new Random().nextInt(100) < 40) {
 					gorilla.lauchFire();
 				}
 			}
-		}
 		
-		List<GameElement> fireballs = currentRoom.getList().stream()
-				.filter(element -> element instanceof Fire)
-				.collect(Collectors.toList());
-		for(GameElement fireball : fireballs) {
-			Fire fire = (Fire) fireball;
-			fire.checkCollisionWithManel();
-			currentRoom.updateFire(fire);
+			List<GameElement> fireballs = currentRoom.getList().stream()
+					.filter(element -> element instanceof Fire)
+					.collect(Collectors.toList());
+			for(GameElement fireball : fireballs) {
+				Fire fire = (Fire) fireball;
+				fire.checkCollisionWithManel();
+				currentRoom.updateFire(fire);
+			}
+		
 		}
 		ImageGUI.getInstance().update();
 	}
 
+	
 	private void processTick() {
 		System.out.println("Tic Tac : " + lastTickProcessed);
 		lastTickProcessed++;
