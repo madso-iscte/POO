@@ -39,17 +39,7 @@ public class Room{
 	private ImageGUI gui;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
@@ -258,6 +248,7 @@ public class Room{
 		}
 	}
 	
+
 	
 	public void moveManel(Direction direction) {
 		Manel manel = (Manel) list.stream()
@@ -288,8 +279,31 @@ public class Room{
 				}
 			} 
 		} 
-		
+	}	
 	
+	
+	public void updateFire(Fire fire) {
+		Point2D oldPosition = fire.getPosition(); 
+		fire.moveDown();
+		Point2D newPosition = fire.getPosition().plus(Direction.DOWN.asVector());
+		
+		if (isPositionValid(newPosition)) { 
+			GameElement elementAtNewPosition = getElementAt(newPosition); 
+			if (elementAtNewPosition instanceof Fire) { 
+				removeElementAt(oldPosition); 
+				fire.setPosition(newPosition);
+				addGameElement(fire);
+			} else { 
+				//removeElementAt(oldPosition); 
+			} 
+		} else { 
+			removeElementAt(oldPosition); // Remover a bola de fogo se sair do campo de jogo }		
+		}
+		gui.update();
+	}
+	
+		
+		
 //		public void moveManel(Direction direction) {
 //			Manel manel = (Manel) list.stream()
 //					.filter(element -> element instanceof Manel)
@@ -313,4 +327,3 @@ public class Room{
   }
 	
 	
-}

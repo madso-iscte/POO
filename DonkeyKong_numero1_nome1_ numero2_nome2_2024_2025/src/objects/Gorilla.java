@@ -89,7 +89,14 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 		}
 	}
 	
-	
+	public void lauchFire() {
+		Point2D firePosition = new Point2D(position.getX(),position.getY()+1);
+		if(Room.isPositionValid(firePosition)) {
+			Fire fire = new Fire(firePosition);
+			GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
+			System.out.println("Fogo!");
+		}
+	}
 	
 	
 	
