@@ -11,7 +11,7 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 	private int damage = 10;
 	
 	public Fire(Point2D initialPosition) {
-		super(initialPosition, "Fire",1);
+		super(initialPosition, "Fire",2);
 		this.position = initialPosition;
 	}
 	
@@ -24,7 +24,7 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 
 	@Override
 	public int getLayer() {
-		return 1;
+		return 2;
 	}
 	
 	@Override
@@ -53,15 +53,23 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 
 	
 	public void checkCollisionWithManel() {
-		Manel manel = (Manel) GameEngine.getInstance().getCurrentRoom().getElementAt(position);
-		if(manel!= null) {
+		GameElement elementAtPosition = GameEngine.getInstance().getCurrentRoom().getElementAt(position);
+		if(elementAtPosition instanceof Manel) {
+			Manel manel = (Manel) elementAtPosition;
 			manel.setVida(manel.getVida()-this.damage);
-			System.out.println("Manel atingido por fogo!");
+			System.out.println("Manel atingido pela bola de fogo! Vida restante: " + manel.getVida());
 			if(manel.getVida()<=0) {
 				manel.semVida();
 			}
 			GameEngine.getInstance().getCurrentRoom().removeElementAt(position);
+			GameEngine.getInstance().getGui().removeImage(this);
 		}
+				
 	}
+	
+	
+	
+	
+	
 	
 }

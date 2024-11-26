@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import objects.Gorilla;
 import objects.Manel;
+import objects.Fire;
 import objects.GameElement;
 import pt.iscte.poo.game.Room;
 import pt.iscte.poo.utils.Point2D;
@@ -184,13 +187,26 @@ public class GameEngine implements Observer {
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
+			
 			Gorilla gorilla = (Gorilla) list.stream()
 					.filter(element -> element instanceof Gorilla)
 					.findFirst()
 					.orElse(null);
 			if(gorilla != null) {
 				gorilla.moveRandomly();
+				if (new Random().nextInt(100) < 20) {
+					gorilla.lauchFire();
+				}
 			}
+		}
+		
+		List<GameElement> fireballs = currentRoom.getList().stream()
+				.filter(element -> element instanceof Fire)
+				.collect(Collectors.toList());
+		for(GameElement fireball : fireballs) {
+			Fire fire = (Fire) fireball;
+			fire.checkCollisionWithManel();
+			currentRoom.updateFire(fire);
 		}
 		ImageGUI.getInstance().update();
 	}
@@ -200,6 +216,6 @@ public class GameEngine implements Observer {
 		lastTickProcessed++;
 	}
 
-
+	
 
 }
