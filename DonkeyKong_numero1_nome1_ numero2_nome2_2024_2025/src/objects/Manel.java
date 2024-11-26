@@ -11,7 +11,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 
 	private Point2D position;
 	private int vida = 100;
-	private int damage = 90; 
+	private int damage = 10; 
 	private boolean hasBife = false;
 	private boolean hasSword = false;
 	
@@ -49,6 +49,10 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 		this.vida = vida;
 	}
 	
+	public boolean temVida() {
+		return this.getVida()>0;
+	}
+	
 	public int getDamage() {
 		return damage;
 	}
@@ -81,15 +85,17 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	}
 	
 	public void attack(Gorilla gorilla) {
-		if(hasSword) {
-			gorilla.takeDamage(damage);
-		} else {
-			gorilla.takeDamage(damage);
+		if(this.temVida()) {	
+			if(hasSword) {
+				gorilla.takeDamage(damage);
+			} else {
+				gorilla.takeDamage(damage);
+			}
+			System.out.println("Manel atacou Gorilla! Dano causado: " + damage);
 		}
-		System.out.println("Manel atacou Gorilla! Dano causado: " + damage);
 	}
-	
-	//providencia uma direcao especifica como argumento
+		//providencia uma direcao especifica como argumento
+
 	public void move(Direction direction) {
 		position = position.plus(direction.asVector());	
 	}
