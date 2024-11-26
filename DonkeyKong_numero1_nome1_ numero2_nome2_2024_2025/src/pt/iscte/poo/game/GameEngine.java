@@ -192,7 +192,7 @@ public class GameEngine implements Observer {
 					.orElse(null);
 			if(gorilla != null) {
 				gorilla.moveRandomly();
-				if (new Random().nextInt(100) < 40) {
+				if (new Random().nextInt(100) < 50) {
 					gorilla.lauchFire();
 				}
 			}

@@ -14,8 +14,7 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 		super(initialPosition, "Fire",2);
 		this.position = initialPosition;
 	}
-	
-	
+
 	
 	@Override
 	public String getName() {
@@ -70,9 +69,6 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 
 		}	
 	}
-	
-	
-	
 	
 	
 	

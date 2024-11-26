@@ -74,22 +74,25 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 	}
 		
 	public void takeDamage(int damage) {
-		this.vida -= damage;
-		GameEngine.getInstance().getGui().setStatusMessage("DonnkeyKong was attacked! Life: " + this.getVida() + "/100");
-		if(this.vida <=0) {
-			GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
-			System.out.println("Gorilla foi derrotado!");
-			GameEngine.getInstance().getGui().setStatusMessage("DonkeyKong killed!");
+		if(this.temVida()) {
+			this.vida -= damage;
+			GameEngine.getInstance().getGui().setStatusMessage("DonnkeyKong was attacked! Life: " + this.getVida() + "/100");
+			if(this.vida <=0) {
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
+				System.out.println("Gorilla foi derrotado!");
+				GameEngine.getInstance().getGui().setStatusMessage("DonkeyKong killed!");
+			}
 		}
-	}
+}
 	
 	public void attack(Manel manel) {
-		if(temVida()) {
+		if(this.temVida()) {
 			manel.setVida(manel.getVida()-this.damage);
 			GameEngine.getInstance().getGui().setStatusMessage("Manel was attacked! Life: " + manel.getVida() + "/100");
-			System.out.println("Gorilla atacou Manel! Dano causado: " + damage);
+			System.out.println("Gorilla atacou o Manel! Dano causado: " + damage);
 			if(manel.getVida()<=0) {
 				manel.semVida();
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition());
 			}
 		}
 	}
@@ -100,18 +103,10 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 			if(Room.isPositionValid(firePosition)) {
 				Fire fire = new Fire(firePosition);
 				GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
-				System.out.println("Fogo!");
+				System.out.println("Fire!");
 			}
 		}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }
