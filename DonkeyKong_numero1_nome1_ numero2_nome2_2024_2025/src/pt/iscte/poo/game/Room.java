@@ -293,12 +293,13 @@ public class Room{
 				removeElementAt(oldPosition); 
 				fire.setPosition(newPosition);
 				addGameElement(fire);
-			} else { 
-				//removeElementAt(oldPosition); 
 			} 
 		} else { 
-			removeElementAt(oldPosition); // Remover a bola de fogo se sair do campo de jogo }		
-		}
+			GameElement elementAtOldPosition = getElementAt(oldPosition);
+			if(elementAtOldPosition instanceof Fire) {
+				removeElementAt(oldPosition);
+			}
+		}	
 		gui.update();
 	}
 	
