@@ -1,5 +1,8 @@
 package objects;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import pt.iscte.poo.game.GameEngine;
 import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Direction;
@@ -9,10 +12,12 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 	
 	private Point2D position;
 	private int damage = 10;
+	private int currentLevel;
 	
 	public Fire(Point2D initialPosition) {
 		super(initialPosition, "Fire",2);
 		this.position = initialPosition;
+		this.currentLevel = GameEngine.getInstance().getCurrentRoom().getLevelNumber();
 	}
 
 	
@@ -70,6 +75,9 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 		}	
 	}
 	
+
 	
+	
+
 	
 }

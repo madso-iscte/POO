@@ -1,6 +1,8 @@
 package pt.iscte.poo.game;
 
 import java.io.File;
+
+//import objects.Fire;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,23 +43,11 @@ public class Room{
 	
 
 	
-	
-	
-	
 	public Room(String filename, GameEngine engine) {
-		//heroStartingPosition = new Point2D(2,2);
-		//manel = new Manel(heroStartingPosition);
-		//ImageGUI.getInstance().addImage(manel);
-		//ImageGUI.getInstance().addImage(new Wall());
-		//List<GameElement> objects = new ArrayList<>();
 		this.filename = filename;
 		this.engine = engine;
 		this.list = new ArrayList<>();
 		this.map = new GameElement[GRID_HEIGHT][GRID_WIDTH];
-		//this.gui = engine.getGui();
-//		manel = new Manel(heroStartingPosition);
-//      ImageGUI.getInstance().addImage(manel);
-//        ImageGUI.getInstance().update();
 	}
 	
 	public List<GameElement> getList(){
@@ -148,16 +138,20 @@ public class Room{
                     continue;
                 }
                 for (int col = 0; col < line.length(); col++) {
-                	Point2D position = new Point2D(col, row);
-                	GameElement floor = new Floor(position);
-                	room.list.add(floor); //adiciona floor na camada inferior
-                	//room.map[row][col] = floor;
-                    char c = line.charAt(col);
-                    GameElement element = GameElement.fromChar(c, room, col, row);
-                    if (element != null) {
-                        room.map[row][col] = element;
-                        room.list.add(element);
-                    }
+                	if (row < room.map.length && col < room.map[0].length) {
+                		Point2D position = new Point2D(col, row);
+                		GameElement floor = new Floor(position);
+                		room.list.add(floor); //adiciona floor na camada inferior
+                		//room.map[row][col] = floor;
+                		char c = line.charAt(col);
+                		GameElement element = GameElement.fromChar(c, room, col, row);
+                		if (element != null) {
+                			room.map[row][col] = element;
+                			room.list.add(element);
+                		}
+                } else {
+                	System.out.println("fora dos limites");
+                }
                 }
                 row++;
             }
@@ -181,9 +175,7 @@ public class Room{
 	
 
 	private static void readConfiguration(String substring, Room r) {
-		// Divide a configuração pelo delimitador ";"
         String[] parts = substring.split(";");
-
         if (parts.length > 0) {
             try {
                 int roomNumber = Integer.parseInt(parts[0]);
@@ -264,7 +256,7 @@ public class Room{
 				GameElement nextElement = getElementAt(newPosition);
 				
 				if(nextElement instanceof Gorilla) {
-					System.out.println("Manel está atacando o Gorilla");
+					System.out.println("Manel está a atacar o Gorilla");
 					manel.attack((Gorilla) nextElement) ;
 				} else if (nextElement instanceof Intransposable && !((Intransposable) nextElement).isTransposable()) {
 					System.out.println("Intransposable Object"+ nextElement.getName());
@@ -283,12 +275,14 @@ public class Room{
 	
 	
 	public void updateFire(Fire fire) {
+		
 		Point2D oldPosition = fire.getPosition(); 
 		fire.moveDown();
 		Point2D newPosition = fire.getPosition().plus(Direction.DOWN.asVector());
 		
 		if (isPositionValid(newPosition)) { 
 			GameElement elementAtNewPosition = getElementAt(newPosition); 
+			
 			if (elementAtNewPosition instanceof Fire) { 
 				removeElementAt(oldPosition); 
 				fire.setPosition(newPosition);

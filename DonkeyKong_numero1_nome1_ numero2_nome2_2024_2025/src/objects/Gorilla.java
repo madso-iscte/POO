@@ -83,7 +83,7 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 				GameEngine.getInstance().getGui().setStatusMessage("DonkeyKong killed!");
 			}
 		}
-}
+	}
 	
 	public void attack(Manel manel) {
 		if(this.temVida()) {

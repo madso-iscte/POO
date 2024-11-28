@@ -2,6 +2,7 @@ package pt.iscte.poo.game;
 
 import pt.iscte.poo.gui.ImageGUI;
 
+
 import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import objects.Door;
 import objects.Gorilla;
 import objects.Manel;
 import objects.Fire;
@@ -39,7 +41,7 @@ public class GameEngine implements Observer {
 	
 	private ImageGUI gui;
 	
-	//private List<GameElement> list = new ArrayList<>();;	
+	
 	private List<Room> niveis;
 	
 	
@@ -84,13 +86,6 @@ public class GameEngine implements Observer {
 		return INSTANCE;
 	}
 	
-	
-//	public void addGameElement(GameElement e) {	
-//		list.add(e);  // Adiciona o elemento à lista interna
-//	    gui.addImage(e);  // Atualiza a interface gráfica
-//	    gui.update();  // Refresca a tela
-//	} 
-	
 	public void addGameElement(GameElement element) {
 		Point2D position = element.getPosition(); 
 		list.add(element);
@@ -99,7 +94,7 @@ public class GameEngine implements Observer {
 			}
 		objectsByPosition.get(position).add(element); 
 		gui.addImage(element);
-		System.out.println("Added element: " + element.getName() + " at " + position);
+		//System.out.println("Added element: " + element.getName() + " at " + position);
 		gui.update();
     }
 	
@@ -109,11 +104,23 @@ public class GameEngine implements Observer {
 		gui.update();
 	}
 
-	public void removeAllGameElements() {
-		for (GameElement e : list) {
-			gui.removeImage(e);
-		}
-		list.removeAll(list);
+	
+	
+//	public void removeAllGameElements() {
+//		for (GameElement e : list) {
+//			gui.removeImage(e);
+//		}
+//		list.removeAll(list);
+//		gui.update();
+//	}
+
+	public void removeAllGameElements() { 
+		List<GameElement> elementsToRemove = new ArrayList<>(list); 
+		for (GameElement e : elementsToRemove) { 
+			System.out.println("Removendo elemento: " + e.getName() + " na posição: " + e.getPosition()); 
+			gui.removeImage(e); 
+			list.remove(e); 
+		} 
 		gui.update();
 	}
 	
@@ -127,7 +134,7 @@ public class GameEngine implements Observer {
 		}
 		return result;
 	}
-	
+		
 	
 	public void start() {
 	    gui = ImageGUI.getInstance();	    
@@ -141,31 +148,57 @@ public class GameEngine implements Observer {
 	}
 	
 	
-//	public void loadRoom(Room room) {
-//		this.currentRoom = room;
-//		room.setEngine(this);
-//		for(GameElement element : list) {
-//			addGameElement(element);
-//		}
-//		gui.update();
-//		
-//	}
-	
 	
 	private void createLevel(Room room) {
 		 this.currentRoom = room;
-		    room.setEngine(this);
-		    // Adiciona todos os elementos da sala ao jogo
-		    for (GameElement element : room.getList()) {
-		        addGameElement(element); // Adiciona ao ImageGUI
-		    }
-		    gui.update();
+		 room.setEngine(this);
+		 for (GameElement element : room.getList()) {
+		     addGameElement(element); // Adiciona ao ImageGUI
+		 }
+		 if(manel!=null) {
+			 manel.setVida(manel.getVida());
+		 }
+		 gui.update();
 	}
-//	
-//	public void restartLevel() {
-//		removeAllGameElements();
-//		createLevel(nivelAtual);
-//	}
+	
+	
+	public void loadNextLevel(String nextRoomFilename) {
+		int vidaAtual = manel.getVida();
+		
+		ImageGUI.getInstance().clearImages();
+		removeAllGameElements();
+		String roomFilePath = "rooms/" + nextRoomFilename;
+		Room nextRoom = Room.readLevel(roomFilePath);
+		createLevel(nextRoom);
+		
+		manel.setVida(vidaAtual);
+	}
+	
+	
+	private void checkManelColilsionWithDoor() {
+		Point2D manelPosition = manel.getPosition();
+		GameElement elementAtPosition = currentRoom.getElementAt(manelPosition);
+		if(elementAtPosition instanceof Door) {
+			Door door = (Door) elementAtPosition;
+			Gorilla gorilla = (Gorilla) list.stream()
+					.filter(element -> element instanceof Gorilla)
+					.findFirst()
+					.orElse(null);
+			if(gorilla == null || !gorilla.temVida()) {
+				loadNextLevel(door.getNextRoomFilename());
+			} else {
+				System.out.println("Kill gorilla first!");		
+			}
+		}		
+	}
+	
+	
+	
+	public void restartLevel() {
+		removeAllGameElements();
+		ImageGUI.getInstance().clearImages();
+		createLevel(nivelAtual);
+	}
 	
 	
 	@Override
@@ -178,7 +211,8 @@ public class GameEngine implements Observer {
 				System.out.println("Direction! ");
 				//cria uma direcao para aplicar no moveManel
 				Direction direction = Direction.directionFor(k);
-				currentRoom.moveManel(direction); 
+				currentRoom.moveManel(direction);
+				checkManelColilsionWithDoor();
 			}
 		}
 								
