@@ -63,7 +63,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 
 	public void semVida() {
 		if(vida <= 0) {
-			endGameLose();
+			//restart level ou restart game
 		}
 	}
 	

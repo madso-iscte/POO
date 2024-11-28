@@ -90,7 +90,9 @@ public abstract class GameElement implements ImageTile {
 		case 't':
 			return new Trap(position);
 		case '0':
-			return new Door(position);
+			return new Door(position, r.getNextRoomFilename());
+		case 'm':
+			return new Steak(position);
 		default:
 			return null;
 		}

@@ -5,8 +5,15 @@ import pt.iscte.poo.gui.ImageTile;
 
 public class Door extends GameElement implements ImageTile, Intransposable {
 
-	public Door(Point2D point2d) {
+	private String nextRoomFilename;
+	
+	public Door(Point2D point2d, String nextRoomFilename) {
 		super(point2d, "DoorClosed", 1);
+		this.nextRoomFilename = nextRoomFilename;
+	}
+	
+	public String getNextRoomFilename() {
+		return nextRoomFilename;
 	}
 
 	@Override
