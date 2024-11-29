@@ -27,7 +27,7 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 
 	@Override
 	public int getLayer() {
-		return 1;
+		return 2;
 	}
 
 	@Override
@@ -105,8 +105,21 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 				GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
 				System.out.println("Fire!");
 			}
-		}
+	}
 	
-
-	
+//	public void lauchFire() {
+//		Point2D firePosition = new Point2D(position.getX(),position.getY()+1);
+//		
+//			if(Room.isPositionValid(firePosition)) {
+//				GameElement existingElement = GameEngine.getInstance().getCurrentRoom().getElementAt(firePosition);
+//				if (existingElement == null || !(existingElement instanceof Fire)) { //evita que haja remoção de outros elementos de jogo
+//					if(temVida()) {
+//					Fire fire = new Fire(firePosition);
+//					GameEngine.getInstance().getCurrentRoom().addGameElement(fire);
+//					System.out.println("Fire!");
+//				}
+//			}
+//		}
+//	}	
+		
 }

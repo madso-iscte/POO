@@ -187,6 +187,7 @@ public class GameEngine implements Observer {
 			if(gorilla == null || !gorilla.temVida()) {
 				loadNextLevel(door.getNextRoomFilename());
 			} else {
+				GameEngine.getInstance().getGui().setStatusMessage("Kill gorilla first!");
 				System.out.println("Kill gorilla first!");		
 			}
 		}		
@@ -216,18 +217,36 @@ public class GameEngine implements Observer {
 			}
 		}
 								
+//		int t = ImageGUI.getInstance().getTicks();
+//		while (lastTickProcessed < t) {
+//			processTick();
+//			
+//			Gorilla gorilla = (Gorilla) list.stream()
+//					.filter(element -> element instanceof Gorilla)
+//					.findFirst()
+//					.orElse(null);
+//			if(gorilla != null) {
+//				gorilla.moveRandomly();
+//				if (new Random().nextInt(100) < 50) {
+//					gorilla.lauchFire();
+//				}
+//			}
+		
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
+		
 			
-			Gorilla gorilla = (Gorilla) list.stream()
+			List<Gorilla> gorillas = list.stream()
 					.filter(element -> element instanceof Gorilla)
-					.findFirst()
-					.orElse(null);
-			if(gorilla != null) {
-				gorilla.moveRandomly();
-				if (new Random().nextInt(100) < 50) {
-					gorilla.lauchFire();
+					.map(element -> (Gorilla) element)
+					.collect(Collectors.toList());
+			for(Gorilla gorilla : gorillas) {
+				if(gorilla.temVida()) {
+					gorilla.moveRandomly();
+					if(new Random().nextInt(100)<50) {
+						gorilla.lauchFire();
+					}
 				}
 			}
 		

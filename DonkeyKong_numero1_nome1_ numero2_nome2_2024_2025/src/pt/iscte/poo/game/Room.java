@@ -274,6 +274,7 @@ public class Room{
 	}	
 	
 	
+	
 	public void updateFire(Fire fire) {
 		
 		Point2D oldPosition = fire.getPosition(); 
@@ -297,8 +298,7 @@ public class Room{
 		gui.update();
 	}
 	
-		
-		
+	
 //		public void moveManel(Direction direction) {
 //			Manel manel = (Manel) list.stream()
 //					.filter(element -> element instanceof Manel)
