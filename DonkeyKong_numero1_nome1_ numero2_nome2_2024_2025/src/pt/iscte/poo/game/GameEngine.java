@@ -26,7 +26,7 @@ import pt.iscte.poo.utils.Point2D;
 public class GameEngine implements Observer {
 	
 
-	private GameEngine engine;
+	private static GameEngine engine;
 	private String filename;
 	private Room currentRoom = new Room(Inicial_room, engine);
 	private int lastTickProcessed = 0;
@@ -104,15 +104,7 @@ public class GameEngine implements Observer {
 	}
 
 
-	
-	
-//	public void removeAllGameElements() {
-//		for (GameElement e : list) {
-//			gui.removeImage(e);
-//		}
-//		list.removeAll(list);
-//		gui.update();
-//	}
+
 
 	public void removeAllGameElements() { 
 		List<GameElement> elementsToRemove = new ArrayList<>(list); 
@@ -157,7 +149,9 @@ public class GameEngine implements Observer {
 		 }
 		 if(manel!=null) {
 			 manel.setVida(manel.getVida());
-		 }
+			 manel.setGameEngine(this);
+		 } 
+		
 		 gui.update();
 	}
 	
@@ -172,6 +166,14 @@ public class GameEngine implements Observer {
 		createLevel(nextRoom);
 		
 		manel.setVida(vidaAtual);
+	}
+	
+	public void restartLevel() {
+		ImageGUI.getInstance().clearImages(); 
+		removeAllGameElements(); 
+		currentRoom = Room.readLevel(Inicial_room);
+		createLevel(currentRoom);
+		gui.setStatusMessage("Jogo reniciado!");
 	}
 	
 	
@@ -195,13 +197,6 @@ public class GameEngine implements Observer {
 	
 	
 	
-	public void restartLevel() {
-		removeAllGameElements();
-		ImageGUI.getInstance().clearImages();
-		createLevel(nivelAtual);
-	}
-	
-	
 	@Override
 	public void update(Observed source) {
 		
@@ -217,25 +212,11 @@ public class GameEngine implements Observer {
 			}
 		}
 								
-//		int t = ImageGUI.getInstance().getTicks();
-//		while (lastTickProcessed < t) {
-//			processTick();
-//			
-//			Gorilla gorilla = (Gorilla) list.stream()
-//					.filter(element -> element instanceof Gorilla)
-//					.findFirst()
-//					.orElse(null);
-//			if(gorilla != null) {
-//				gorilla.moveRandomly();
-//				if (new Random().nextInt(100) < 50) {
-//					gorilla.lauchFire();
-//				}
-//			}
 		
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
-		
+
 			
 			List<Gorilla> gorillas = list.stream()
 					.filter(element -> element instanceof Gorilla)

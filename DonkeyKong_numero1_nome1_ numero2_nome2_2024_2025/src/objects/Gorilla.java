@@ -78,7 +78,7 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 			this.vida -= damage;
 			GameEngine.getInstance().getGui().setStatusMessage("DonnkeyKong was attacked! Life: " + this.getVida() + "/100");
 			if(this.vida <=0) {
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(),this);
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(),this );
 				System.out.println("Gorilla foi derrotado!");
 				GameEngine.getInstance().getGui().setStatusMessage("DonkeyKong killed!");
 			}

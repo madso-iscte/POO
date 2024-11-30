@@ -1,5 +1,6 @@
 package objects;
 
+import pt.iscte.poo.game.GameEngine;
 import pt.iscte.poo.gui.ImageTile;
 
 import pt.iscte.poo.utils.Point2D;
@@ -17,11 +18,13 @@ public class Princess extends GameElement implements ImageTile, Intransposable{
 
 	@Override
 	public int getLayer() {
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public boolean isTransposable() {
-		return false;
+		return true;
 	}
+	
+	
 }
