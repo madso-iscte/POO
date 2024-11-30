@@ -12,12 +12,13 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 	
 	private Point2D position;
 	private int damage = 10;
-	private int currentLevel;
+	//private int currentLevel;
+	
 	
 	public Fire(Point2D initialPosition) {
 		super(initialPosition, "Fire",2);
 		this.position = initialPosition;
-		this.currentLevel = GameEngine.getInstance().getCurrentRoom().getLevelNumber();
+		//this.currentLevel = GameEngine.getInstance().getCurrentRoom().getLevelNumber();
 	}
 
 	
@@ -55,27 +56,27 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 		move(Direction.DOWN);
 	}
 
-	
+
 	public void checkCollisionWithManel() {
-		GameElement elementAtPosition = GameEngine.getInstance().getCurrentRoom().getElementAt(position);
+		GameElement elementAtPosition = GameEngine.getInstance().getCurrentRoom().getElementAt(position);		
+		
 		if(elementAtPosition instanceof Manel) {
 			Manel manel = (Manel) elementAtPosition;
 			manel.setVida(manel.getVida()-this.damage);
 			GameEngine.getInstance().getGui().setStatusMessage("Manel was attacked! Life " + manel.getVida() + "/100");
 			System.out.println("Manel atingido pela bola de fogo! Vida restante: " + manel.getVida());
 			
+			GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(), this);
 			GameEngine.getInstance().getGui().removeImage(this);
 			
 			if(manel.getVida()<=0) {
 				manel.semVida();
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(position);
-				GameEngine.getInstance().getGui().removeImage(this);
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
+				GameEngine.getInstance().getGui().removeImage(manel);
 			}
 
 		}	
 	}
-	
-
 	
 	
 

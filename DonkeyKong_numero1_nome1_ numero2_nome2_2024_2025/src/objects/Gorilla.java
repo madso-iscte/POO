@@ -78,7 +78,7 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 			this.vida -= damage;
 			GameEngine.getInstance().getGui().setStatusMessage("DonnkeyKong was attacked! Life: " + this.getVida() + "/100");
 			if(this.vida <=0) {
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(),this);
 				System.out.println("Gorilla foi derrotado!");
 				GameEngine.getInstance().getGui().setStatusMessage("DonkeyKong killed!");
 			}
@@ -92,13 +92,13 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 			System.out.println("Gorilla atacou o Manel! Dano causado: " + damage);
 			if(manel.getVida()<=0) {
 				manel.semVida();
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition());
+				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
 			}
 		}
 	}
 	
 	public void lauchFire() {
-		Point2D firePosition = new Point2D(position.getX(),position.getY()+1);
+		Point2D firePosition = new Point2D(position.getX(),position.getY());
 		if(temVida())
 			if(Room.isPositionValid(firePosition)) {
 				Fire fire = new Fire(firePosition);

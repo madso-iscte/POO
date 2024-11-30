@@ -219,27 +219,65 @@ public class Room{
 		return null;
 	}
 	
-	public void removeElementAt(Point2D position) {
-		GameElement element = getElementAt(position);
+
+	
+
+	
+//	public void removeElementAt(Point2D position) {
+//		GameElement element = getElementAt(position);
+//		if (element != null) { 
+//			list.remove(element); 
+//			
+//			List<GameElement> elementsAtPosition = objectsByPosition.get(position);
+//			if (elementsAtPosition == null) { 
+//				elementsAtPosition = new ArrayList<>();
+//				objectsByPosition.put(position, elementsAtPosition); 
+//			}
+//			
+//			elementsAtPosition.remove(element); 
+//			if (elementsAtPosition.isEmpty()) { 
+//				objectsByPosition.remove(position); 
+//				}
+//			
+//			gui.removeImage(element);
+//			gui.update();
+//		}
+//	}
+	
+	
+	public void removeElementAt(Point2D position, GameElement element) {
 		if (element != null) { 
 			list.remove(element); 
-			
+		
 			List<GameElement> elementsAtPosition = objectsByPosition.get(position);
 			if (elementsAtPosition == null) { 
 				elementsAtPosition = new ArrayList<>();
 				objectsByPosition.put(position, elementsAtPosition); 
 			}
-			
+		
 			elementsAtPosition.remove(element); 
 			if (elementsAtPosition.isEmpty()) { 
 				objectsByPosition.remove(position); 
 				}
-			
+		
 			gui.removeImage(element);
 			gui.update();
 		}
 	}
 	
+//	public void removeElementAt(Point2D position, GameElement element) { 
+//		List<GameElement> elementsAtPosition = objectsByPosition.get(position); 
+//		if (elementsAtPosition != null && elementsAtPosition.contains(element)) { 
+//			GameEngine.getInstance().getGui().removeImage(element); 
+//			list.remove(element); 
+//			elementsAtPosition.remove(element); 
+//			if (elementsAtPosition.isEmpty()) { 
+//				objectsByPosition.remove(position); 
+//			}
+//			GameEngine.getInstance().getGui().removeImage(element);
+//			GameEngine.getInstance().getGui().update();
+//		}
+//	}
 
 	
 	public void moveManel(Direction direction) {
@@ -277,27 +315,12 @@ public class Room{
 	
 	public void updateFire(Fire fire) {
 		
-		Point2D oldPosition = fire.getPosition(); 
 		fire.moveDown();
-		Point2D newPosition = fire.getPosition().plus(Direction.DOWN.asVector());
-		
-		if (isPositionValid(newPosition)) { 
-			GameElement elementAtNewPosition = getElementAt(newPosition); 
-			
-			if (elementAtNewPosition instanceof Fire) { 
-				removeElementAt(oldPosition); 
-				fire.setPosition(newPosition);
-				addGameElement(fire);
-			} 
-		} else { 
-			GameElement elementAtOldPosition = getElementAt(oldPosition);
-			if(elementAtOldPosition instanceof Fire) {
-				removeElementAt(oldPosition);
-			}
-		}	
 		gui.update();
+		
 	}
 	
+
 	
 //		public void moveManel(Direction direction) {
 //			Manel manel = (Manel) list.stream()
