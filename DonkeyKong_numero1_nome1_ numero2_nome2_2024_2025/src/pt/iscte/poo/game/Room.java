@@ -91,41 +91,7 @@ public class Room{
 	public int getHeight() {
 		return GRID_HEIGHT;
 	}
-	
-	
 
-//	public Room readLevel(String f) {
-//        Room r = new Room(filename, GameEngine.getInstance());
-//		//list = new ArrayList<>();
-//		try {
-//			Scanner s = new Scanner(new File(f));
-//            int i = 0;
-//                while (s.hasNextLine()) {
-//                    String line = s.nextLine();
-//                    if (line.startsWith("#")) {
-//                        readConfiguration(line.substring(1),r);
-//                        continue;
-//                    }
-//                    for (int j = 0; j < line.length(); j++) {
-//                        char c = line.charAt(j);
-//                        if(Character.isDigit(c)) {
-//                        	r.setDoorPosition(c+"", j, i);
-//                        } else {
-//                        	GameElement obj = GameElement.fromChar(c, r, j, i);
-//                        	if(obj!=null){
-//                        		obj.setPosition(j, i);
-//                        		r.addGameElement(obj);
-//                        }
-//                    }
-//                }
-//                i++;
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        return r;
-//    }
-	
 	
 	public static Room readLevel(String filename) {
 		Room room = new Room(filename, GameEngine.getInstance());
@@ -161,16 +127,7 @@ public class Room{
         return room;
     }
 
-    
-	
 
-    public void addGameElement(GameElement element) { 
-    	Point2D position = element.getPosition(); 
-    	list.add(element); 
-    	objectsByPosition.computeIfAbsent(position, k -> new ArrayList<>()).add(element); 
-    	gui.addImage(element);
-    	gui.update();
-    }
     
 	
 
@@ -191,14 +148,7 @@ public class Room{
         }			
 	}
 
-	
-	
-//	public void setDoorPosition(String doorId, int x, int y) {
-//		Point2D position = new Point2D(x, y);
-//        Door door = new Door(position);
-//        GameEngine.addGameElement(door);
-//	}	
-		
+
 		
 	//delimita o campo de jogo
 	public static boolean isPositionValid(Point2D position) {
@@ -219,31 +169,28 @@ public class Room{
 		return null;
 	}
 	
-
 	
-
 	
-//	public void removeElementAt(Point2D position) {
-//		GameElement element = getElementAt(position);
-//		if (element != null) { 
-//			list.remove(element); 
-//			
-//			List<GameElement> elementsAtPosition = objectsByPosition.get(position);
-//			if (elementsAtPosition == null) { 
-//				elementsAtPosition = new ArrayList<>();
-//				objectsByPosition.put(position, elementsAtPosition); 
-//			}
-//			
-//			elementsAtPosition.remove(element); 
-//			if (elementsAtPosition.isEmpty()) { 
-//				objectsByPosition.remove(position); 
-//				}
-//			
-//			gui.removeImage(element);
-//			gui.update();
+	
+//	public GameElement getElementAt(Point2D position) { 
+//		List<GameElement> elementsAtPosition = objectsByPosition.get(position); 
+//		if (elementsAtPosition != null && !elementsAtPosition.isEmpty()) { 
+//			return elementsAtPosition.get(0); // Retornar o primeiro elemento na posição } return null;
 //		}
+//		return null;
 //	}
 	
+
+	
+	
+	
+    public void addGameElement(GameElement element) { 
+    	Point2D position = element.getPosition(); 
+    	list.add(element); 
+    	objectsByPosition.computeIfAbsent(position, k -> new ArrayList<>()).add(element); 
+    	gui.addImage(element);
+    	gui.update();
+    }
 	
 	public void removeElementAt(Point2D position, GameElement element) {
 		if (element != null) { 
@@ -265,20 +212,6 @@ public class Room{
 		}
 	}
 	
-//	public void removeElementAt(Point2D position, GameElement element) { 
-//		List<GameElement> elementsAtPosition = objectsByPosition.get(position); 
-//		if (elementsAtPosition != null && elementsAtPosition.contains(element)) { 
-//			GameEngine.getInstance().getGui().removeImage(element); 
-//			list.remove(element); 
-//			elementsAtPosition.remove(element); 
-//			if (elementsAtPosition.isEmpty()) { 
-//				objectsByPosition.remove(position); 
-//			}
-//			GameEngine.getInstance().getGui().removeImage(element);
-//			GameEngine.getInstance().getGui().update();
-//		}
-//	}
-
 	
 	public void moveManel(Direction direction) {
 		Manel manel = (Manel) list.stream()
@@ -310,38 +243,15 @@ public class Room{
 			} 
 		} 
 	}	
+
 	
-	
-	
-	public void updateFire(Fire fire) {
-		
+	public void updateFire(Fire fire) {		
 		fire.moveDown();
-		gui.update();
-		
+		gui.update();		
 	}
 	
 
 	
-//		public void moveManel(Direction direction) {
-//			Manel manel = (Manel) list.stream()
-//					.filter(element -> element instanceof Manel)
-//					.findFirst() 
-//					.orElse(null); 
-//			if (manel != null) { 
-//				Point2D newPosition = manel.getPosition().plus(direction.asVector());
-//				if (Room.isPositionValid(newPosition)) { 
-//					manel.move(direction);						
-//				} 
-//			}	
-		
-		
-//	public void moveManel(Direction direction) {
-//		//calcula a nova posicao
-//		Point2D newPosition = manel.getPosition().plus(direction.asVector());
-//	    if (Room.isPositionValid(newPosition)) {
-//	        manel.move(direction);
-//	        
-//	    }
   }
 	
 	

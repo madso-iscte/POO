@@ -76,7 +76,7 @@ public abstract class GameElement implements ImageTile {
 		case ' ':
 			return new Floor(position);
 		case 'H':
-			Manel manel = new Manel(position);
+			Manel manel = new Manel(position, gameEngine);
             GameEngine.getInstance().setManel(manel); // Define o Manel no GameEngine
             return manel;
 		case 'S':
