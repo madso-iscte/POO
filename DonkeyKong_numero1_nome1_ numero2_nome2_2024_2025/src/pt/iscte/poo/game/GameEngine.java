@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-
+import objects.Princess;
 import objects.Door;
 import objects.Gorilla;
 import objects.Manel;
@@ -22,6 +22,7 @@ import objects.Fire;
 import objects.GameElement;
 import pt.iscte.poo.game.Room;
 import pt.iscte.poo.utils.Point2D;
+import pt.iscte.poo.utils.Direction;
 
 public class GameEngine implements Observer {
 	
@@ -109,7 +110,6 @@ public class GameEngine implements Observer {
 	public void removeAllGameElements() { 
 		List<GameElement> elementsToRemove = new ArrayList<>(list); 
 		for (GameElement e : elementsToRemove) { 
-			System.out.println("Removendo elemento: " + e.getName() + " na posição: " + e.getPosition()); 
 			gui.removeImage(e); 
 			list.remove(e); 
 		} 
@@ -173,8 +173,28 @@ public class GameEngine implements Observer {
 		removeAllGameElements(); 
 		currentRoom = Room.readLevel(Inicial_room);
 		createLevel(currentRoom);
-		gui.setStatusMessage("Jogo reniciado!");
+//		gui.setStatusMessage("Jogo reniciado!");
 	}
+	
+	
+	public void foundPrincess() {
+		Gorilla gorilla = (Gorilla) list.stream()
+				.filter(element -> element instanceof Gorilla)
+				.findFirst()
+				.orElse(null);
+		if(gorilla == null || !gorilla.temVida()) {
+			GameEngine gameEngine = GameEngine.getInstance();
+			GameEngine.getInstance().getGui().setStatusMessage("Player Wins!");
+			GameEngine.getInstance().getGui().showMessage("End of Game!", "Player found Princess!");
+			gameEngine.restartLevel();
+			GameEngine.getInstance().getGui().setStatusMessage("Game reseted!");
+		} else {
+			GameEngine.getInstance().getGui().setStatusMessage("Kill gorilla first!");
+			System.out.println("Kill gorilla first!");		
+		}
+	}
+	
+	
 	
 	
 	private void checkManelColilsionWithDoor() {

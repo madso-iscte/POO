@@ -79,6 +79,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 		if(vida <= 0) {
 			if(gameEngine != null) {
 				gameEngine.restartLevel();
+				GameEngine.getInstance().getGui().setStatusMessage("Player lost!");
 			} else {
 				System.out.println("gameEngine nao definido");
 			}
@@ -122,21 +123,26 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 //		position = position.plus(direction.asVector());	
 //	}
 	
+	
+	
 	public void move(Direction direction) {
 		Point2D newPosition = position.plus(direction.asVector());
 		GameElement elementAtNewPosition = GameEngine.getInstance().getCurrentRoom().getElementAt(newPosition);
+		
 		if(elementAtNewPosition instanceof Princess) {
-			foundPrincess();
+			gameEngine.foundPrincess();
 		} else {
 			position = newPosition;
 		}
 		GameEngine.getInstance().getGui().update();
 	}
 			
-	public void foundPrincess() {
-		GameEngine gameEngine = GameEngine.getInstance();
-		GameEngine.getInstance().getGui().setStatusMessage("Jogador venceu!");
-		GameEngine.getInstance().getGui().showMessage("Fim do jogo!", "Jogador encontrou a Princessa!");
-		gameEngine.restartLevel();
-	}
+	
+	
+//	public void foundPrincess() {
+//		GameEngine gameEngine = GameEngine.getInstance();
+//		GameEngine.getInstance().getGui().setStatusMessage("Jogador venceu!");
+//		GameEngine.getInstance().getGui().showMessage("Fim do jogo!", "Jogador encontrou a Princessa!");
+//		gameEngine.restartLevel();
+//	}
 }
