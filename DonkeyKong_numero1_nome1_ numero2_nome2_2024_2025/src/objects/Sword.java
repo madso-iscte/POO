@@ -34,11 +34,11 @@ public class Sword extends GameElement implements ImageTile, Interactable{
 		manel.setDamage(manel.getDamage()*2);
 		manel.setHasSword(true);
 		
-		GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition());
+		GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(),this);
 		GameEngine.getInstance().getGui().setStatusMessage("Double Damage Enabled!");
 		
 		System.out.println("Damage atual: " + manel.getDamage());
-		}
+	}
 }
 	
 

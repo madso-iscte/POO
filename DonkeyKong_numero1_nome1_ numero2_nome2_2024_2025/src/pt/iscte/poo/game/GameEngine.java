@@ -88,13 +88,12 @@ public class GameEngine implements Observer {
 	
 	public void addGameElement(GameElement element) {
 		Point2D position = element.getPosition(); 
-		list.add(element);
 		if (!objectsByPosition.containsKey(position)) { 
 			objectsByPosition.put(position, new ArrayList<>()); 
 			}
 		objectsByPosition.get(position).add(element); 
+		list.add(element);
 		gui.addImage(element);
-		//System.out.println("Added element: " + element.getName() + " at " + position);
 		gui.update();
     }
 	
@@ -103,6 +102,7 @@ public class GameEngine implements Observer {
 		gui.removeImage(e);
 		gui.update();
 	}
+
 
 	
 	
@@ -244,7 +244,7 @@ public class GameEngine implements Observer {
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
 					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<50) {
+					if(new Random().nextInt(100)<99) {
 						gorilla.lauchFire();
 					}
 				}
