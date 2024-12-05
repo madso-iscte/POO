@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import objects.Princess;
+import objects.Trap;
 import objects.Door;
 import objects.Gorilla;
 import objects.Manel;
@@ -259,6 +260,13 @@ public class GameEngine implements Observer {
 				fire.checkCollisionWithManel();
 				currentRoom.updateFire(fire);
 			}
+			
+			List<GameElement> traps = currentRoom.getList().stream()
+	                .filter(element -> element instanceof Trap)
+	                .collect(Collectors.toList());
+	        for (GameElement trap : traps) {
+	            ((Trap) trap).checkCollisionWithManel(manel);
+	        }
 		
 		}
 		ImageGUI.getInstance().update();
