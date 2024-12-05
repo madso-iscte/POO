@@ -115,9 +115,9 @@ public class Room{
                 			room.map[row][col] = element;
                 			room.list.add(element);
                 		}
-                } else {
-                	System.out.println("fora dos limites");
-                }
+                	} else {
+                		System.out.println("fora dos limites");
+                	}
                 }
                 row++;
             }

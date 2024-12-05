@@ -173,11 +173,11 @@ public class GameEngine implements Observer {
 		removeAllGameElements(); 
 		currentRoom = Room.readLevel(Inicial_room);
 		createLevel(currentRoom);
-//		gui.setStatusMessage("Jogo reniciado!");
 	}
 	
 	
 	public void foundPrincess() {
+		//ta mal feito - tem que abranger os dois (ou mais) gorillas
 		Gorilla gorilla = (Gorilla) list.stream()
 				.filter(element -> element instanceof Gorilla)
 				.findFirst()
@@ -245,7 +245,7 @@ public class GameEngine implements Observer {
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
 					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<99) {
+					if(new Random().nextInt(100)<30) {
 						gorilla.lauchFire();
 					}
 				}
