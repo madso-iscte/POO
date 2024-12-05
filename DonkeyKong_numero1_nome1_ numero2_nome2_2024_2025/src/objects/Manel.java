@@ -4,7 +4,6 @@ import pt.iscte.poo.gui.ImageGUI;
 import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
-//import pt.iscte.poo.utils.*;
 import pt.iscte.poo.game.*;
 import java.util.List;
 import objects.Intransposable;
