@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import objects.Princess;
+import objects.Stairs;
 import objects.Trap;
 import objects.Door;
 import objects.Gorilla;
@@ -238,7 +239,15 @@ public class GameEngine implements Observer {
 		while (lastTickProcessed < t) {
 			processTick();
 
-			
+			Point2D position = manel.getPosition();  // Acesse a posição de Manel aqui
+	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); // Usando position corretamente aqui
+	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
+
+	        // Se não for escada, move Manel para baixo
+	        if (!(elementBelow instanceof Stairs)) {
+	            Direction down = Direction.DOWN; // Representa a direção para baixo
+	            currentRoom.moveManel(down); // Move Manel para baixo
+	        }
 			List<Gorilla> gorillas = list.stream()
 					.filter(element -> element instanceof Gorilla)
 					.map(element -> (Gorilla) element)
