@@ -135,6 +135,8 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 		}
 		GameEngine.getInstance().getGui().update();
 	}
+	
+	
 			
 	
 	
