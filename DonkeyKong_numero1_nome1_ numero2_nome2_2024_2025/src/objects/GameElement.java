@@ -95,6 +95,8 @@ public abstract class GameElement implements ImageTile {
 			return new Door(position, r.getNextRoomFilename());
 		case 'm':
 			return new Steak(position);
+		case 'B':
+			return new Bomb(position);
 		default:
 			return null;
 		}

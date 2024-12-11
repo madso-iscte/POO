@@ -5,6 +5,8 @@ import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 import pt.iscte.poo.game.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import objects.Intransposable;
 import objects.Gorilla;
@@ -18,7 +20,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	private boolean hasBife = false;
 	private boolean hasSword = false;
 	private GameEngine gameEngine;
-
+	private boolean hasBomb = false;
 
 	
 	public Manel(Point2D initialPosition, GameEngine gameEngine){
@@ -127,7 +129,14 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 //		position = position.plus(direction.asVector());	
 //	}
 	
-	
+	public void dropBomb() {
+	    if (hasBomb) {
+	        Bomb bomb = new Bomb(getPosition());
+	        bomb.activate();
+	        GameEngine.getInstance().getCurrentRoom().addGameElement(bomb);
+	        hasBomb = false;
+	    }
+	}
 	
 	public void move(Direction direction) {
 		Point2D newPosition = position.plus(direction.asVector());

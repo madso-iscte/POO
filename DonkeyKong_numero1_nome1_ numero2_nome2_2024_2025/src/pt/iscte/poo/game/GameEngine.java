@@ -16,6 +16,8 @@ import objects.Princess;
 import objects.Stairs;
 import objects.Trap;
 import objects.Bat;
+import objects.Bomb;
+//import objects.Bat;
 import objects.Door;
 import objects.Gorilla;
 import objects.Floor;
@@ -259,78 +261,80 @@ public class GameEngine implements Observer {
 	
 	@Override
 	public void update(Observed source) {
-		
-		if (ImageGUI.getInstance().wasKeyPressed()) {
-			int k = ImageGUI.getInstance().keyPressed();
-			System.out.println("Keypressed " + k);
-			if (Direction.isDirection(k)) {
-				System.out.println("Direction! ");
-				Direction direction = Direction.directionFor(k);				
-				currentRoom.moveManel(direction);
-				checkManelColilsionWithDoor();
-			}
-		}
-								
-		
-		int t = ImageGUI.getInstance().getTicks();
-		while (lastTickProcessed < t) {
-			processTick();
+	    if (ImageGUI.getInstance().wasKeyPressed()) {
+	        int k = ImageGUI.getInstance().keyPressed();
+	        System.out.println("Keypressed " + k);
+	        if (k == 'b') {
+	            manel.dropBomb();
+	        }
+	        if (Direction.isDirection(k)) {
+	            System.out.println("Direction! ");
+	            Direction direction = Direction.directionFor(k);
+	            currentRoom.moveManel(direction);
+	            checkManelColilsionWithDoor();
+	        }
+	    }
 
-			
-			Point2D position = manel.getPosition(); 
-	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
+	    int t = ImageGUI.getInstance().getTicks();
+	    while (lastTickProcessed < t) {
+	        processTick();
+
+	        Point2D position = manel.getPosition();
+	        Point2D nextPosition = position.plus(Direction.DOWN.asVector());
 	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
 
 	        if (!(elementBelow instanceof Stairs)) {
-	            Direction down = Direction.DOWN;  
-	            currentRoom.moveManel(down); 
+	            Direction down = Direction.DOWN;
+	            currentRoom.moveManel(down);
 	        }
-	        
-	        
-			List<Gorilla> gorillas = list.stream()
-					.filter(element -> element instanceof Gorilla)
-					.map(element -> (Gorilla) element)
-					.collect(Collectors.toList());
-			for(Gorilla gorilla : gorillas) {
-				if(gorilla.temVida()) {
-					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<60) {
-						gorilla.lauchFire();
-					}
-				}
-			}
-			
-			List<Bat> bats = list.stream()
-					.filter(element -> element instanceof Bat)
-					.map(element -> (Bat) element)
-					.collect(Collectors.toList());
-			for(Bat bat : bats) {
-				bat.moveRandomly();
-			}
-			
-			
-		
-			List<GameElement> fireballs = currentRoom.getList().stream()
-					.filter(element -> element instanceof Fire)
-					.collect(Collectors.toList());
-			for(GameElement fireball : fireballs) {
-				Fire fire = (Fire) fireball;
-				fire.checkCollisionWithManel();
-				currentRoom.updateFire(fire);
-			}
-			
-			List<GameElement> traps = currentRoom.getList().stream()
-	                .filter(element -> element instanceof Trap)
-	                .collect(Collectors.toList());
+
+	        List<Gorilla> gorillas = list.stream()
+	            .filter(element -> element instanceof Gorilla)
+	            .map(element -> (Gorilla) element)
+	            .collect(Collectors.toList());
+	        for (Gorilla gorilla : gorillas) {
+	            if (gorilla.temVida()) {
+	                gorilla.moveRandomly();
+	                if (new Random().nextInt(100) < 60) {
+	                    gorilla.lauchFire();
+	                }
+	            }
+	        }
+
+	        List<Bomb> bombs = currentRoom.getList().stream()
+	            .filter(element -> element instanceof Bomb)
+	            .map(element -> (Bomb) element)
+	            .collect(Collectors.toList());
+	        for (Bomb bomb : bombs) {
+	            bomb.tick();
+	        }
+
+	        List<GameElement> fireballs = currentRoom.getList().stream()
+	            .filter(element -> element instanceof Fire)
+	            .collect(Collectors.toList());
+	        for (GameElement fireball : fireballs) {
+	            Fire fire = (Fire) fireball;
+	            fire.checkCollisionWithManel();
+	            currentRoom.updateFire(fire);
+	        }
+
+	        List<GameElement> traps = currentRoom.getList().stream()
+	            .filter(element -> element instanceof Trap)
+	            .collect(Collectors.toList());
 	        for (GameElement trap : traps) {
 	            ((Trap) trap).checkCollisionWithManel(manel);
 	        }
-	        
-	        levelTics++; //rottenSteak
+
+	        levelTics++;
 	        checkSteakStatus();
-		
-		}
-		ImageGUI.getInstance().update();
+	    }
+	    ImageGUI.getInstance().update();
+	}
+	
+	private List<Bomb> bombs = new ArrayList<>();
+
+	public void addBomb(Bomb bomb) {
+	    bombs.add(bomb);
 	}
 
 	
