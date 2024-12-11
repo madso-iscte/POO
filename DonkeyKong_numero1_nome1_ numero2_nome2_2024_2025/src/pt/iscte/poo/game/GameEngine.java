@@ -1,8 +1,6 @@
 package pt.iscte.poo.game;
 
 import pt.iscte.poo.gui.ImageGUI;
-
-
 import pt.iscte.poo.observer.Observed;
 import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
@@ -19,6 +17,7 @@ import objects.Stairs;
 import objects.Trap;
 import objects.Door;
 import objects.Gorilla;
+import objects.Floor;
 import objects.Manel;
 import objects.Fire;
 import objects.GameElement;
@@ -30,13 +29,12 @@ public class GameEngine implements Observer {
 	
 
 	private static GameEngine engine;
-	private String filename;
 	private Room currentRoom = new Room(Inicial_room, engine);
 	private int lastTickProcessed = 0;
 	
 	private static final String Inicial_room = "rooms/room0.txt";
 	
-	//nao sei se é necessario
+
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	
@@ -45,8 +43,6 @@ public class GameEngine implements Observer {
 	private ImageGUI gui;
 	
 	
-	private List<Room> niveis;
-	
 	
 	private List<GameElement> list = new ArrayList<>(); 
 	private Map<Point2D, List<GameElement>> objectsByPosition = new HashMap<>();
@@ -54,6 +50,7 @@ public class GameEngine implements Observer {
 	
 	private Manel manel;
 	private Room nivelAtual;
+	private int vidas = 3;
 	
 	public GameEngine() {
 		gui = ImageGUI.getInstance(); 
@@ -134,10 +131,10 @@ public class GameEngine implements Observer {
 	    gui = ImageGUI.getInstance();	    
 	    gui.registerObserver(this);
 	    gui.go();
-	    System.out.println("GUI inicializada!");
+	    //System.out.println("GUI inicializada!");
 	    Room initialRoom = Room.readLevel(Inicial_room); // Lê a sala inicial
 	    createLevel(initialRoom);
-	    gui.setStatusMessage("DonkeyKong!");
+	    gui.setStatusMessage("DonkeyKong! Lives: 3!");
 	    gui.update();
 	}
 	
@@ -170,16 +167,33 @@ public class GameEngine implements Observer {
 		manel.setVida(vidaAtual);
 	}
 	
-	public void restartLevel() {
-		ImageGUI.getInstance().clearImages(); 
-		removeAllGameElements(); 
-		currentRoom = Room.readLevel(Inicial_room);
-		createLevel(currentRoom);
+	public void resetManelPosition() {
+		Point2D initialPosition = currentRoom.getManelInitialPosition();
+		addGameElement(manel);
+		manel.setPosition(initialPosition);
+		
+		gui.update();
 	}
+	
+	public void restartGame() {
+		if(vidas > 1) {
+			removeGameElement(manel);
+			resetManelPosition();
+			vidas--;
+			GameEngine.getInstance().getGui().setStatusMessage("Player lost a life! Lives remaining: " + vidas);
+		} else {		
+			ImageGUI.getInstance().clearImages(); 
+			removeAllGameElements(); 
+			currentRoom = Room.readLevel(Inicial_room);
+			createLevel(currentRoom);
+			GameEngine.getInstance().getGui().setStatusMessage("Player lost all his lives. Game reseted! Lives: 3");
+			vidas = 3;
+		}
+	}
+
 	
 	
 	public void foundPrincess() {
-		//ta mal feito - tem que abranger os dois (ou mais) gorillas
 		Gorilla gorilla = (Gorilla) list.stream()
 				.filter(element -> element instanceof Gorilla)
 				.findFirst()
@@ -188,7 +202,7 @@ public class GameEngine implements Observer {
 			GameEngine gameEngine = GameEngine.getInstance();
 			GameEngine.getInstance().getGui().setStatusMessage("Player Wins!");
 			GameEngine.getInstance().getGui().showMessage("End of Game!", "Player found Princess!");
-			gameEngine.restartLevel();
+			gameEngine.restartGame();
 			GameEngine.getInstance().getGui().setStatusMessage("Game reseted!");
 		} else {
 			GameEngine.getInstance().getGui().setStatusMessage("Kill gorilla first!");
@@ -227,8 +241,7 @@ public class GameEngine implements Observer {
 			System.out.println("Keypressed " + k);
 			if (Direction.isDirection(k)) {
 				System.out.println("Direction! ");
-				//cria uma direcao para aplicar no moveManel
-				Direction direction = Direction.directionFor(k);
+				Direction direction = Direction.directionFor(k);				
 				currentRoom.moveManel(direction);
 				checkManelColilsionWithDoor();
 			}
@@ -239,23 +252,24 @@ public class GameEngine implements Observer {
 		while (lastTickProcessed < t) {
 			processTick();
 
-			Point2D position = manel.getPosition();  // Acesse a posição de Manel aqui
-	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); // Usando position corretamente aqui
+			Point2D position = manel.getPosition(); 
+	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
 	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
 
-	        // Se não for escada, move Manel para baixo
+
 	        if (!(elementBelow instanceof Stairs)) {
-	            Direction down = Direction.DOWN; // Representa a direção para baixo
-	            currentRoom.moveManel(down); // Move Manel para baixo
+	            Direction down = Direction.DOWN;  
+	            currentRoom.moveManel(down); 
 	        }
+	        
 			List<Gorilla> gorillas = list.stream()
 					.filter(element -> element instanceof Gorilla)
 					.map(element -> (Gorilla) element)
 					.collect(Collectors.toList());
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
-					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<30) {
+					//gorilla.moveRandomly();
+					if(new Random().nextInt(100)<80) {
 						gorilla.lauchFire();
 					}
 				}

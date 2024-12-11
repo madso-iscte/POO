@@ -49,6 +49,11 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 		return false;
 	}
 	
+	public void setPosition(Point2D newPosition) { 
+		this.position = newPosition; 
+		System.out.println("Nova posição de Manel definida: " + this.position); 
+	}
+	
 	public void setGameEngine(GameEngine gameEngine) {
 		this.gameEngine = gameEngine;
 	}
@@ -77,8 +82,8 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	public void semVida() {
 		if(vida <= 0) {
 			if(gameEngine != null) {
-				gameEngine.restartLevel();
-				GameEngine.getInstance().getGui().setStatusMessage("Player lost!");
+				gameEngine.restartGame();
+				vida = 100;
 			} else {
 				System.out.println("gameEngine nao definido");
 			}
