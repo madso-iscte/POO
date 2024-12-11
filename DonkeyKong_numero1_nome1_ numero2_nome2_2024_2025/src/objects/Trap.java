@@ -35,8 +35,6 @@ public class Trap extends GameElement implements ImageTile, Intransposable {
 			
 			if(manel.getVida()<=0) {
 				manel.semVida();
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
-				GameEngine.getInstance().getGui().removeImage(manel);
 			}
 	    }
 	}

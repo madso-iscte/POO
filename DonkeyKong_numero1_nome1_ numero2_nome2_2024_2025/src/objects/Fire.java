@@ -71,8 +71,8 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 			
 			if(manel.getVida()<=0) {
 				manel.semVida();
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
-				GameEngine.getInstance().getGui().removeImage(manel);
+				//GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
+				//GameEngine.getInstance().getGui().removeImage(manel);
 			}
 
 		}	

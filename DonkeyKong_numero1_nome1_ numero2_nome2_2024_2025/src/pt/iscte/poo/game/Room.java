@@ -17,12 +17,6 @@ import objects.*;
 
 public class Room{
 	
-	private Point2D heroStartingPosition;
-	private Manel manel;
-
-	
-	//manel = new Manel(heroStartingPosition);
-	//addObject(manel);
 	
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
@@ -31,8 +25,6 @@ public class Room{
 	private int levelNumber;
 	private String nextRoomFilename;
 	private List<GameElement> list;
-	//private List<Room> rooms = new ArrayList<>();
-	private GameEngine engine;
 
 	private GameElement[][] map;
 
@@ -40,12 +32,11 @@ public class Room{
 	
 	private ImageGUI gui;
 	
-	
+	private Point2D manelInitialPosition;
 
 	
 	public Room(String filename, GameEngine engine) {
 		this.filename = filename;
-		this.engine = engine;
 		this.list = new ArrayList<>();
 		this.map = new GameElement[GRID_HEIGHT][GRID_WIDTH];
 	}
@@ -55,8 +46,16 @@ public class Room{
 	}
 	
 	
+	public Point2D getManelInitialPosition() {
+		return this.manelInitialPosition;
+	}
+
+	public void setManelInitialPosition(Point2D position) {
+		this.manelInitialPosition = position;
+	}
+
+	
 	public void setEngine(GameEngine engine) {
-		this.engine = engine;
 		this.gui = engine.getGui();
 	}
 	
@@ -80,9 +79,6 @@ public class Room{
 		return filename;
 	}
 	
-	public void setHeroStartingPosition(Point2D position) {
-		this.heroStartingPosition = position;
-	}
 	
 	public int getWidth() {
 		return GRID_WIDTH;
@@ -107,13 +103,15 @@ public class Room{
                 	if (row < room.map.length && col < room.map[0].length) {
                 		Point2D position = new Point2D(col, row);
                 		GameElement floor = new Floor(position);
-                		room.list.add(floor); //adiciona floor na camada inferior
-                		//room.map[row][col] = floor;
+                		room.list.add(floor); 
                 		char c = line.charAt(col);
                 		GameElement element = GameElement.fromChar(c, room, col, row);
                 		if (element != null) {
                 			room.map[row][col] = element;
                 			room.list.add(element);
+                			if(element instanceof Manel) {
+                				room.setManelInitialPosition(position);
+                			}
                 		}
                 	} else {
                 		System.out.println("fora dos limites");
@@ -128,15 +126,13 @@ public class Room{
     }
 
 
-    
-	
 
 	private static void readConfiguration(String substring, Room r) {
         String[] parts = substring.split(";");
         if (parts.length > 0) {
             try {
                 int roomNumber = Integer.parseInt(parts[0]);
-                r.setLevelNumber(roomNumber); 
+                r.setLevelNumber(roomNumber);
             } catch (NumberFormatException e) {
                 System.err.println("Erro ao interpretar o número da sala.");
             }
@@ -169,20 +165,7 @@ public class Room{
 		return null;
 	}
 	
-	
-	
-	
-//	public GameElement getElementAt(Point2D position) { 
-//		List<GameElement> elementsAtPosition = objectsByPosition.get(position); 
-//		if (elementsAtPosition != null && !elementsAtPosition.isEmpty()) { 
-//			return elementsAtPosition.get(0); // Retornar o primeiro elemento na posição } return null;
-//		}
-//		return null;
-//	}
-	
 
-	
-	
 	
     public void addGameElement(GameElement element) { 
     	Point2D position = element.getPosition(); 

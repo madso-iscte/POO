@@ -92,7 +92,6 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 			System.out.println("Gorilla atacou o Manel! Dano causado: " + damage);
 			if(manel.getVida()<=0) {
 				manel.semVida();
-				GameEngine.getInstance().getCurrentRoom().removeElementAt(manel.getPosition(),manel);
 			}
 		}
 	}
