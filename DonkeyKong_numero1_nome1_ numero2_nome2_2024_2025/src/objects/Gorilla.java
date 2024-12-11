@@ -5,7 +5,6 @@ import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D; 
 import pt.iscte.poo.game.GameEngine;
 import pt.iscte.poo.game.Room;
-
 import java.util.Random;
 
 public class Gorilla extends GameElement implements ImageTile, Intransposable, MovableObject {

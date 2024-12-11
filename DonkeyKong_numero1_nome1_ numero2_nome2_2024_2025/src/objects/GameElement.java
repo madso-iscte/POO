@@ -85,6 +85,8 @@ public abstract class GameElement implements ImageTile {
 			return new Sword(position, 25);
 		case 'G': 
 			return new Gorilla(position);
+		case 'b':
+			return new Bat(position);
 		case 'P':
 			return new Princess(position);
 		case 't':

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import objects.Princess;
 import objects.Stairs;
 import objects.Trap;
+import objects.Bat;
 import objects.Door;
 import objects.Gorilla;
 import objects.Floor;
@@ -275,15 +276,16 @@ public class GameEngine implements Observer {
 		while (lastTickProcessed < t) {
 			processTick();
 
+			
 			Point2D position = manel.getPosition(); 
 	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
 	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
-
 
 	        if (!(elementBelow instanceof Stairs)) {
 	            Direction down = Direction.DOWN;  
 	            currentRoom.moveManel(down); 
 	        }
+	        
 	        
 			List<Gorilla> gorillas = list.stream()
 					.filter(element -> element instanceof Gorilla)
@@ -292,11 +294,21 @@ public class GameEngine implements Observer {
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
 					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<80) {
+					if(new Random().nextInt(100)<60) {
 						gorilla.lauchFire();
 					}
 				}
 			}
+			
+			List<Bat> bats = list.stream()
+					.filter(element -> element instanceof Bat)
+					.map(element -> (Bat) element)
+					.collect(Collectors.toList());
+			for(Bat bat : bats) {
+				bat.moveRandomly();
+			}
+			
+			
 		
 			List<GameElement> fireballs = currentRoom.getList().stream()
 					.filter(element -> element instanceof Fire)
