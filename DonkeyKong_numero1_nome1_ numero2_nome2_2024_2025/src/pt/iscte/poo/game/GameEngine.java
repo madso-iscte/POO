@@ -20,6 +20,7 @@ import objects.Gorilla;
 import objects.Floor;
 import objects.Manel;
 import objects.Fire;
+import objects.Steak;
 import objects.GameElement;
 import pt.iscte.poo.game.Room;
 import pt.iscte.poo.utils.Point2D;
@@ -51,11 +52,20 @@ public class GameEngine implements Observer {
 	private Manel manel;
 	private Room nivelAtual;
 	private int vidas = 3;
+	private int levelTics = 0;
 	
 	public GameEngine() {
 		gui = ImageGUI.getInstance(); 
 		list = new ArrayList<>();
 		gui.update();
+	}
+	
+	public int getLevelTics() {
+		return levelTics;
+	}
+	
+	public int getVidas() {
+		return vidas;
 	}
 	
 	public Room getCurrentRoom() {
@@ -165,6 +175,8 @@ public class GameEngine implements Observer {
 		createLevel(nextRoom);
 		
 		manel.setVida(vidaAtual);
+		
+		levelTics = 0;
 	}
 	
 	public void resetManelPosition() {
@@ -232,6 +244,17 @@ public class GameEngine implements Observer {
 	}
 	
 	
+	public void checkSteakStatus() { 
+		if (levelTics > 12) { 
+			for (GameElement element : currentRoom.getList()) { 
+				if (element instanceof Steak) { 
+					GameEngine.getInstance().getGui().setStatusMessage("Steak has gotten rotten!"); 
+					break; 
+					} 
+				} 
+			} 
+		}
+	
 	
 	@Override
 	public void update(Observed source) {
@@ -268,7 +291,7 @@ public class GameEngine implements Observer {
 					.collect(Collectors.toList());
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
-					//gorilla.moveRandomly();
+					gorilla.moveRandomly();
 					if(new Random().nextInt(100)<80) {
 						gorilla.lauchFire();
 					}
@@ -290,6 +313,9 @@ public class GameEngine implements Observer {
 	        for (GameElement trap : traps) {
 	            ((Trap) trap).checkCollisionWithManel(manel);
 	        }
+	        
+	        levelTics++; //rottenSteak
+	        checkSteakStatus();
 		
 		}
 		ImageGUI.getInstance().update();
