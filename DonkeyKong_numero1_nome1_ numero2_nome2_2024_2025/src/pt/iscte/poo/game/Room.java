@@ -232,8 +232,10 @@ public class Room{
 		fire.moveDown();
 		gui.update();		
 	}
-	
 
+	
+	
+	
 	
   }
 	
