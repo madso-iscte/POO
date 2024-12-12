@@ -1,10 +1,10 @@
 #0;room2.txt
 0 G    b  
-WWWWWSWWWW
+WWWWWSWWTW
      S    
- WWWWWWSWW
+ WWTWWWSWW
        S  
-SWWWWWWWWW
+SWWTWWWWWW
 S    m    
 WWWWWWWWSW
 t  H    S  
