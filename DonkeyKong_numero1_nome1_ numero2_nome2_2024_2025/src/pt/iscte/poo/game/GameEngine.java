@@ -264,7 +264,7 @@ public class GameEngine implements Observer {
 	    if (ImageGUI.getInstance().wasKeyPressed()) {
 	        int k = ImageGUI.getInstance().keyPressed();
 	        System.out.println("Keypressed " + k);
-	        if (k == 'b') {
+	        if (k == 66) {
 	            manel.dropBomb();
 	        }
 	        if (Direction.isDirection(k)) {
@@ -301,13 +301,22 @@ public class GameEngine implements Observer {
 	            }
 	        }
 
-	        List<Bomb> bombs = currentRoom.getList().stream()
-	            .filter(element -> element instanceof Bomb)
-	            .map(element -> (Bomb) element)
+	        List<Bat> bats = list.stream()
+	            .filter(element -> element instanceof Bat)
+	            .map(element -> (Bat) element)
 	            .collect(Collectors.toList());
-	        for (Bomb bomb : bombs) {
-	            bomb.tick();
+	        for (Bat bat : bats) {
+	            bat.moveRandomly();
 	        }
+
+	        List<Bomb> bombs = currentRoom.getList().stream()
+	                .filter(element -> element instanceof Bomb)
+	                .map(element -> (Bomb) element)
+	                .collect(Collectors.toList());
+	            for (Bomb bomb : bombs) {
+	                bomb.tick();
+	                bomb.checkCollisionWithEntities();
+	            }
 
 	        List<GameElement> fireballs = currentRoom.getList().stream()
 	            .filter(element -> element instanceof Fire)
@@ -325,7 +334,7 @@ public class GameEngine implements Observer {
 	            ((Trap) trap).checkCollisionWithManel(manel);
 	        }
 
-	        levelTics++;
+	        levelTics++; //rottenSteak
 	        checkSteakStatus();
 	    }
 	    ImageGUI.getInstance().update();

@@ -105,6 +105,10 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 		return hasSword;
 	}
 	
+	public boolean hasBomb() {
+		return hasBomb;
+	}
+	
 	public void setHasSword(boolean hasSword) {
 		this.hasSword = hasSword;
 	}
@@ -129,6 +133,10 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 //		position = position.plus(direction.asVector());	
 //	}
 	
+	
+	public void setHasBomb(boolean hasBomb) {
+	    this.hasBomb = hasBomb;
+	}
 	public void dropBomb() {
 	    if (hasBomb) {
 	        Bomb bomb = new Bomb(getPosition());
