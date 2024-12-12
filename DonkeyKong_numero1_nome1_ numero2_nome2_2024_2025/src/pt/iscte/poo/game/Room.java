@@ -213,7 +213,7 @@ public class Room{
 					System.out.println("Manel está a atacar o Gorilla");
 					manel.attack((Gorilla) nextElement) ;
 				} else if (nextElement instanceof Intransposable && !((Intransposable) nextElement).isTransposable()) {
-					System.out.println("Intransposable Object"+ nextElement.getName());
+					//System.out.println("Intransposable Object"+ nextElement.getName());
 				} else if(nextElement instanceof Interactable) {
 					((Interactable) nextElement).interact(manel);
 					manel.move(direction);

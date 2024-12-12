@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import objects.Princess;
 import objects.Stairs;
 import objects.Trap;
+import objects.TrapWall;
 import objects.Bat;
 import objects.Door;
 import objects.Gorilla;
@@ -324,6 +325,21 @@ public class GameEngine implements Observer {
 	                .collect(Collectors.toList());
 	        for (GameElement trap : traps) {
 	            ((Trap) trap).checkCollisionWithManel(manel);
+	        }
+	        
+	        List<GameElement> trapWalls = currentRoom.getList().stream()
+	        		.filter(element -> element instanceof TrapWall)
+	        		.collect(Collectors.toList());
+	        for(GameElement trapWall : trapWalls) {
+	        	TrapWall tw = (TrapWall) trapWall;
+	        	Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
+	        	if (tw.getPosition().equals(positionBelowManel)) {
+	        		tw.interact(manel);
+	        		System.out.println("trap ativa");
+	        	} else { 
+	        		tw.resetIfManelLeft(manel); 
+	        		System.out.println("trap desativada");
+	        	}
 	        }
 	        
 	        levelTics++; //rottenSteak
