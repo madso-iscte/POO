@@ -99,15 +99,18 @@ public class Bomb extends GameElement implements Interactable {
     	Point2D position = getPosition(); 
     	Room currentRoom = GameEngine.getInstance().getCurrentRoom();
     	boolean hitSomething = false;
+    	
+    	List<Blast> blasts = new ArrayList<>();
     		
     	for(int dx = -1; dx<= 1; dx++) {
     		for(int dy = -1; dy<=1; dy++) {
     			Point2D target = position.plus(new Vector2D(dx,dy));
-    			currentRoom.addGameElement(new Blast(target));
+    			Blast blast = new Blast(target);
+    			currentRoom.addGameElement(blast);
+    			blasts.add(blast);
     		}
     	}   	
 
-    	
     	for (int dx = -1; dx <= 1; dx++) { 
     		for (int dy = -1; dy <= 1; dy++) { 
     			Point2D target = position.plus(new Vector2D(dx, dy));
@@ -139,24 +142,13 @@ public class Bomb extends GameElement implements Interactable {
     		GameEngine.getInstance().getGui().setStatusMessage("Bomb didn´t hit anyone!");
     	}
     	currentRoom.removeElementAt(position, this);
-    	
-    	
-    	Timer timer = new Timer(600, new ActionListener() {
+  	
+    	Timer timer = new Timer(500, new ActionListener() {
     		@Override
     		public void actionPerformed(ActionEvent e) {
-    			List<Point2D> blastPositions = new ArrayList<>();
-    			for (int dx = -1; dx <= 1; dx++) { 
-    				for (int dy = -1; dy <= 1; dy++) { 
-    					Point2D target = position.plus(new Vector2D(dx, dy)); 
-    					GameElement element = currentRoom.getElementAt(target); 
-    					if (element instanceof Blast) { 
-    						blastPositions.add(target); 
-    						} 
-    					} 
-    				} 
-    			for (Point2D target : blastPositions) { 
-    				currentRoom.removeElementAt(target, currentRoom.getElementAt(target));
-    				} 
+    			for(Blast blast : blasts) {
+    				currentRoom.removeElementAt(blast.getPosition(), blast);
+    			}
     			GameEngine.getInstance().getGui().update();
     		}
     	});
