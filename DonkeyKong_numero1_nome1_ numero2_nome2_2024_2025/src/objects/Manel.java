@@ -1,13 +1,13 @@
 package objects;
 
-import pt.iscte.poo.gui.ImageGUI;
+//import pt.iscte.poo.gui.ImageGUI;
 import pt.iscte.poo.gui.ImageTile;
 import pt.iscte.poo.utils.Direction;
 import pt.iscte.poo.utils.Point2D;
 import pt.iscte.poo.game.*;
-import java.util.List;
-import objects.Intransposable;
-import objects.Gorilla;
+//import java.util.List;
+//import objects.Intransposable;
+//import objects.Gorilla;
 
 
 public class Manel extends GameElement implements ImageTile, MovableObject, Intransposable {
@@ -18,6 +18,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	private boolean hasBife = false;
 	private boolean hasSword = false;
 	private GameEngine gameEngine;
+	private boolean hasBomb = false;
 
 
 	
@@ -142,7 +143,19 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	}
 	
 	
+
 			
+	public void setHasBomb(boolean hasBomb) {
+		this.hasBomb = hasBomb;
+	}
+	public void dropBomb() {
+		if(hasBomb) {
+			Bomb bomb = new Bomb(getPosition());
+			bomb.activate();
+			GameEngine.getInstance().getCurrentRoom().addGameElement(bomb);
+			hasBomb = false;
+		}
+	}
 	
 	
 //	public void foundPrincess() {

@@ -8,6 +8,7 @@ public class Steak extends GameElement implements ImageTile, Interactable{
 	
 	//private GameEngine gameEngine;
 	private int tics = 0;
+//	private boolean isRotten = false;
 	
 	public Steak(Point2D point2d) {
 		super(point2d, "Sword", 0);
@@ -22,15 +23,29 @@ public class Steak extends GameElement implements ImageTile, Interactable{
 	public String getName() {
 		return "GoodMeat";
 	}
+	
+//	@Override
+//	public String getName() {
+//		return isRotten ? "GooMeat" : "Poison";
+//	}
 
 	@Override
 	public int getLayer() {
 		return 1;
 	}
+	
+	public boolean isRotten() {
+		int levelTics = GameEngine.getInstance().getLevelTics();
+		if(levelTics > 12) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public void showMessageRottenSteak() {
 		int levelTics = GameEngine.getInstance().getLevelTics();
-		if(levelTics > 10) {
+		if(levelTics > 12) {
 			GameEngine.getInstance().getGui().setStatusMessage("Steak has got rotten	!");
 		}
 	}
@@ -38,7 +53,7 @@ public class Steak extends GameElement implements ImageTile, Interactable{
 	@Override
 	public void interact(Manel manel) {
 		int levelTics = GameEngine.getInstance().getLevelTics();
-		if(levelTics > 10) {
+		if(levelTics > 12) {
 			manel.setVida(manel.getVida()-20);
 			GameEngine.getInstance().getGui().setStatusMessage("Oops! You waited too long! Player´s life: " + manel.getVida());
 			

@@ -50,7 +50,7 @@ public class TrapWall extends GameElement implements ImageTile, Intransposable, 
 	    		activated = true;
 	    		manel.setVida(manel.getVida() - 10);
 	    		GameEngine.getInstance().getGui().setStatusMessage("Ouch! Looks like you found a sneaky trap! Life " + manel.getVida() + "/100");
-	    		System.out.println("Trap ativada");
+	    		//System.out.println("Trap ativada");
 			
 	    		if(manel.getVida()<=0) {
 				manel.semVida();
@@ -62,7 +62,7 @@ public class TrapWall extends GameElement implements ImageTile, Intransposable, 
 	public void resetIfManelLeft(Manel manel) { 
 		if (activated && !this.getPosition().equals(manel.getPosition())) {
 			activated = false; 
-			System.out.println("TrapWall desativada!"); 
+			//System.out.println("TrapWall desativada!"); 
 			} 
 		}
 	
