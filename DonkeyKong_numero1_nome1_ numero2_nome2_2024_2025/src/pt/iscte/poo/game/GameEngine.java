@@ -300,7 +300,7 @@ public class GameEngine implements Observer {
 				if(gorilla.temVida()) {
 					gorilla.moveRandomly();
 					if(new Random().nextInt(100)<40) {
-						gorilla.lauchFire();
+						//gorilla.lauchFire();
 					}
 				}
 			}
@@ -310,7 +310,7 @@ public class GameEngine implements Observer {
 					.map(element -> (Bat) element)
 					.collect(Collectors.toList());
 			for(Bat bat : bats) {
-				bat.moveRandomly();
+				//bat.moveRandomly();
 			}
 			
 			List<Bomb> bombs = currentRoom.getList().stream()
@@ -320,6 +320,7 @@ public class GameEngine implements Observer {
 			for(Bomb bomb : bombs) {
 				bomb.tick();
 				bomb.checkCollisionWithEnemies();
+				bomb.explodeManel();
 			}
 			
 			
