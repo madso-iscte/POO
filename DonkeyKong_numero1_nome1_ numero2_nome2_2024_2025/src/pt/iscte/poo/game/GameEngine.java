@@ -18,6 +18,7 @@ import objects.Trap;
 import objects.TrapWall;
 import objects.Bat;
 import objects.Door;
+import objects.Bomb;
 import objects.Gorilla;
 import objects.Floor;
 import objects.Manel;
@@ -264,6 +265,9 @@ public class GameEngine implements Observer {
 		if (ImageGUI.getInstance().wasKeyPressed()) {
 			int k = ImageGUI.getInstance().keyPressed();
 			System.out.println("Keypressed " + k);
+			 if (k == 66) {
+		            manel.dropBomb();
+		        }
 			if (Direction.isDirection(k)) {
 				System.out.println("Direction! ");
 				Direction direction = Direction.directionFor(k);				
@@ -295,7 +299,7 @@ public class GameEngine implements Observer {
 			for(Gorilla gorilla : gorillas) {
 				if(gorilla.temVida()) {
 					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<60) {
+					if(new Random().nextInt(100)<40) {
 						gorilla.lauchFire();
 					}
 				}
@@ -307,6 +311,15 @@ public class GameEngine implements Observer {
 					.collect(Collectors.toList());
 			for(Bat bat : bats) {
 				bat.moveRandomly();
+			}
+			
+			List<Bomb> bombs = currentRoom.getList().stream()
+					.filter(element -> element instanceof Bomb)
+					.map(element -> (Bomb) element)
+					.collect(Collectors.toList());
+			for(Bomb bomb : bombs) {
+				bomb.tick();
+				bomb.checkCollisionWithEnemies();
 			}
 			
 			
@@ -335,10 +348,10 @@ public class GameEngine implements Observer {
 	        	Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
 	        	if (tw.getPosition().equals(positionBelowManel)) {
 	        		tw.interact(manel);
-	        		System.out.println("trap ativa");
+	        		//System.out.println("trap ativa");
 	        	} else { 
 	        		tw.resetIfManelLeft(manel); 
-	        		System.out.println("trap desativada");
+	        		//System.out.println("trap desativada");
 	        	}
 	        }
 	        
@@ -349,6 +362,11 @@ public class GameEngine implements Observer {
 		ImageGUI.getInstance().update();
 	}
 
+	private List<Bomb> bombs = new ArrayList<>();
+
+	public void addBomb(Bomb bomb) {
+	    bombs.add(bomb);
+	}
 	
 	private void processTick() {
 		System.out.println("Tic Tac : " + lastTickProcessed);

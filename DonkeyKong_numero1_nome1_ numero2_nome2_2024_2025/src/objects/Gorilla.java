@@ -52,6 +52,10 @@ public class Gorilla extends GameElement implements ImageTile, Intransposable, M
 		return vida;
 	}
 	
+	public void setVida(int vida) {
+		this.vida= vida;	
+	}
+	
 	public void move(Direction direction) {
 		position = position.plus(direction.asVector());
 	}

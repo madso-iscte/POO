@@ -93,6 +93,8 @@ public abstract class GameElement implements ImageTile {
 			return new Trap(position);
 		case 'T':
 			return new TrapWall(position);
+		case 'B':
+			return new Bomb(position);
 		case '0':
 			return new Door(position, r.getNextRoomFilename());
 		case 'm':
