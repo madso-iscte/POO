@@ -2,10 +2,16 @@ package objects;
 
 import pt.iscte.poo.utils.Point2D;
 import pt.iscte.poo.utils.Vector2D;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import pt.iscte.poo.game.GameEngine;
 import pt.iscte.poo.game.Room;
 
-public class Bomb extends GameElement implements Intransposable, Interactable {
+public class Bomb extends GameElement implements Interactable {
     private int ticksToExplode = 10; // 5 segundos, assumindo 10 ticks por segundo
     private boolean isActive = false;
     private boolean isPickedUp = false;
@@ -20,10 +26,10 @@ public class Bomb extends GameElement implements Intransposable, Interactable {
         return 1;
     }
 
-    @Override
-    public boolean isTransposable() {
-        return !isActive;
-    }
+//    @Override
+//    public boolean isTransposable() {
+//        return true;
+//    }
 
     public void activate() {
         isActive = true;
@@ -56,10 +62,21 @@ public class Bomb extends GameElement implements Intransposable, Interactable {
             explode(); // Explode imediatamente se pisada
         }
     }
+    
+    public void explodeManel() {
+    	Room currentRoom = GameEngine.getInstance().getCurrentRoom();
+        GameElement elementAtPosition = currentRoom.getElementAt(getPosition());
+    	Point2D manelPosition = GameEngine.getInstance().getManel().getPosition();
+    	if(this.getPosition() != manelPosition) {
+    		if(elementAtPosition instanceof Manel) {
+    			explode();
+    		}
+    	}
+    }
 
     @Override
     public void interact(Manel manel) {
-        if (!isPickedUp && !hasBeenDropped) {
+        if (!isPickedUp && !hasBeenDropped && !isActive) {
             isPickedUp = true;
             isActive = false;
             manel.setHasBomb(true);
@@ -80,7 +97,17 @@ public class Bomb extends GameElement implements Intransposable, Interactable {
 
     public void explode() { 
     	Point2D position = getPosition(); 
-    	Room currentRoom = GameEngine.getInstance().getCurrentRoom(); 
+    	Room currentRoom = GameEngine.getInstance().getCurrentRoom();
+    	boolean hitSomething = false;
+    		
+    	for(int dx = -1; dx<= 1; dx++) {
+    		for(int dy = -1; dy<=1; dy++) {
+    			Point2D target = position.plus(new Vector2D(dx,dy));
+    			currentRoom.addGameElement(new Blast(target));
+    		}
+    	}   	
+
+    	
     	for (int dx = -1; dx <= 1; dx++) { 
     		for (int dy = -1; dy <= 1; dy++) { 
     			Point2D target = position.plus(new Vector2D(dx, dy));
@@ -91,27 +118,51 @@ public class Bomb extends GameElement implements Intransposable, Interactable {
     					manel.setVida(manel.getVida()-100);
     					manel.semVida();
     					//System.out.println("manel atingido");
-    					GameEngine.getInstance().getGui().setStatusMessage("Manel got hit by bomb!"); 
+    					GameEngine.getInstance().getGui().setStatusMessage("Manel got hit by bomb!");
+    					hitSomething = true;
     				} else if (element instanceof Gorilla) {
     					Gorilla gorilla = (Gorilla) element; 
     					gorilla.setVida(gorilla.getVida() - 100);
     					currentRoom.removeElementAt(target, element);
-    					GameEngine.getInstance().getGui().setStatusMessage("Gorila got hit by bomb!"); 
+    					GameEngine.getInstance().getGui().setStatusMessage("Bomb hit Gorilla!");
+    					hitSomething = true;
     					System.out.println("gorilla atingido");
     				} else if (element instanceof Bat) { 
-    					GameEngine.getInstance().getGui().setStatusMessage("Morcego got hit by bomb!"); 
-    					currentRoom.removeElementAt(target, element); 
+    					GameEngine.getInstance().getGui().setStatusMessage("Bomb hit Bat!"); 
+    					currentRoom.removeElementAt(target, element);
+    					hitSomething = true;
     				} 
-    			} //else {
-//    				GameEngine.getInstance().getGui().setStatusMessage("Bomb didn´t hit anyone!");
-//    				System.out.println("nada explodiu");
-//    			}
-    			 
+    			} 		 
     		} 
     	}
-    	//GameEngine.getInstance().getGui().setStatusMessage("Bomb didn´t hit anyone!");
-		System.out.println("nada explodiu");
-    	currentRoom.removeElementAt(position, this); 
+    	if(!hitSomething) {
+    		GameEngine.getInstance().getGui().setStatusMessage("Bomb didn´t hit anyone!");
+    	}
+    	currentRoom.removeElementAt(position, this);
+    	
+    	
+    	Timer timer = new Timer(600, new ActionListener() {
+    		@Override
+    		public void actionPerformed(ActionEvent e) {
+    			List<Point2D> blastPositions = new ArrayList<>();
+    			for (int dx = -1; dx <= 1; dx++) { 
+    				for (int dy = -1; dy <= 1; dy++) { 
+    					Point2D target = position.plus(new Vector2D(dx, dy)); 
+    					GameElement element = currentRoom.getElementAt(target); 
+    					if (element instanceof Blast) { 
+    						blastPositions.add(target); 
+    						} 
+    					} 
+    				} 
+    			for (Point2D target : blastPositions) { 
+    				currentRoom.removeElementAt(target, currentRoom.getElementAt(target));
+    				} 
+    			GameEngine.getInstance().getGui().update();
+    		}
+    	});
+    	timer.setRepeats(false);
+    	timer.start();
+    	
     	GameEngine.getInstance().getGui().update(); 
     }
 
