@@ -90,40 +90,61 @@ public class Room{
 
 	
 	public static Room readLevel(String filename) {
-		Room room = new Room(filename, GameEngine.getInstance());
-        try (Scanner scanner = new Scanner(new File(filename))) {
-            int row = 0;
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("#")) {
-                	readConfiguration(line.substring(1),room);
-                    continue;
-                }
-                for (int col = 0; col < line.length(); col++) {
-                	if (row < room.map.length && col < room.map[0].length) {
-                		Point2D position = new Point2D(col, row);
-                		GameElement floor = new Floor(position);
-                		room.list.add(floor); 
-                		char c = line.charAt(col);
-                		GameElement element = GameElement.fromChar(c, room, col, row);
-                		if (element != null) {
-                			room.map[row][col] = element;
-                			room.list.add(element);
-                			if(element instanceof Manel) {
-                				room.setManelInitialPosition(position);
-                			}
-                		}
-                	} else {
-                		System.out.println("fora dos limites");
-                	}
-                }
-                row++;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return room;
-    }
+	    Room room = new Room(filename, GameEngine.getInstance());
+	    File file = new File(filename);
+	    
+	    if (!file.exists()) {
+	        Scanner scanner = new Scanner(System.in);
+	        System.out.println("Ficheiro não encontrado. Por favor, indique o nome do ficheiro a ler para o próximo nível:");
+	        String newFilename = scanner.nextLine();
+	        return readLevel(newFilename);
+	    }
+
+	    try (Scanner scanner = new Scanner(file)) {
+	        int row = 0;
+	        while (scanner.hasNextLine()) {
+	            String line = scanner.nextLine();
+	            if (line.startsWith("#")) {
+	                readConfiguration(line.substring(1), room);
+	                continue;
+	            }
+	            if (row >= room.map.length) {
+	                System.out.println("Falta uma linha inteira no ficheiro. O jogo será abortado.");
+	                GameEngine.getInstance().getGui().dispose();
+	                System.exit(1);
+	            }
+	            for (int col = 0; col < room.map[0].length; col++) {
+	                Point2D position = new Point2D(col, row);
+	                GameElement floor = new Floor(position);
+	                room.list.add(floor);
+	                if (col < line.length()) {
+	                    char c = line.charAt(col);
+	                    GameElement element = GameElement.fromChar(c, room, col, row);
+	                    if (element != null) {
+	                        room.map[row][col] = element;
+	                        room.list.add(element);
+	                        if (element instanceof Manel) {
+	                            room.setManelInitialPosition(position);
+	                        }
+	                    } else {
+	                        System.out.println("Caractere desconhecido na linha " + row + ", coluna " + col + ". Preenchido com chão.");
+	                    }
+	                } else {
+	                    System.out.println("Faltam caracteres na linha " + row + ". Preenchido com chão.");
+	                }
+	            }
+	            row++;
+	        }
+	        if (row < room.map.length) {
+	            System.out.println("Falta uma linha inteira no ficheiro. O jogo será abortado.");
+	            GameEngine.getInstance().getGui().dispose();
+	            System.exit(1);
+	        }
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	    return room;
+	}
 
 
 

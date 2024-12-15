@@ -182,17 +182,17 @@ public class GameEngine implements Observer {
 	
 	
 	public void loadNextLevel(String nextRoomFilename) {
-		int vidaAtual = manel.getVida();
-		
-		ImageGUI.getInstance().clearImages();
-		removeAllGameElements();
-		String roomFilePath = "rooms/" + nextRoomFilename;
-		Room nextRoom = Room.readLevel(roomFilePath);
-		createLevel(nextRoom);
-		
-		manel.setVida(vidaAtual);
-		
-		levelTics = 0;
+	    int vidaAtual = manel.getVida();
+	    
+	    ImageGUI.getInstance().clearImages();
+	    removeAllGameElements();
+	    String roomFilePath = "rooms/" + nextRoomFilename;
+	    Room nextRoom = Room.readLevel(roomFilePath);
+	    createLevel(nextRoom);
+	    
+	    manel.setVida(vidaAtual);
+	    
+	    levelTics = 0; // Reinicia os ticks do nível, mas não os totais
 	}
 	
 	public void resetManelPosition() {
@@ -369,10 +369,10 @@ public class GameEngine implements Observer {
 								
 		
 		int t = ImageGUI.getInstance().getTicks();
-		while (lastTickProcessed < t) {
-			processTick();
-			
-			Point2D position = manel.getPosition(); 
+	    while (lastTickProcessed < t) {
+	        processTick();
+	        
+	        Point2D position = manel.getPosition(); 
 	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
 	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
 
