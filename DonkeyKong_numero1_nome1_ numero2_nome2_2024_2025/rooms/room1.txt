@@ -1,3 +1,4 @@
+#0;room2.txt
 0 G    b  
 WWWWWSWWTW
      S    

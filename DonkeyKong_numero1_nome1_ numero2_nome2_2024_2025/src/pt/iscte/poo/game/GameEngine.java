@@ -63,6 +63,7 @@ public class GameEngine implements Observer {
 	private Manel manel;
 	private Room nivelAtual;
 	private int vidas = 3;
+	private int totalTics = 0;
 	private int levelTics = 0;
 	
 	public GameEngine() {
@@ -73,6 +74,10 @@ public class GameEngine implements Observer {
 	
 	public int getLevelTics() {
 		return levelTics;
+	}
+	
+	public int getTotalTics() {
+		return totalTics;
 	}
 	
 	public int getVidas() {
@@ -228,6 +233,19 @@ public class GameEngine implements Observer {
 	    }
 	}
 	
+	public static void deleteScoresFile() {
+	    File file = new File("scores.txt"); // Caminho do ficheiro
+	    if (file.exists()) {
+	        if (file.delete()) {
+	            System.out.println("Ficheiro scores.txt apagado com sucesso!");
+	        } else {
+	            System.err.println("Erro ao apagar o ficheiro scores.txt!");
+	        }
+	    } else {
+	        System.out.println("Ficheiro scores.txt não existe.");
+	    }
+	}
+	
 	// Método para salvar o score
     public static void saveScore(String jogador, int score) {
         List<Score> scores = getScoresFromFile(SCORE_FILE, new Score(jogador, score));
@@ -246,7 +264,7 @@ public class GameEngine implements Observer {
     // Método para buscar scores do arquivo
     private static List<Score> getScoresFromFile(String file, Score novoScore) {
         List<Score> scores = new ArrayList<>();
-        scores.add(novoScore);
+        scores.add(novoScore); // Adiciona o novo score
         try (Scanner scanner = new Scanner(new File(file))) {
             while (scanner.hasNextLine()) {
                 scores.add(new Score(scanner.nextLine()));
@@ -254,7 +272,8 @@ public class GameEngine implements Observer {
         } catch (FileNotFoundException e) {
             System.err.println("Arquivo de scores não encontrado. Será criado um novo.");
         }
-        scores.sort(Comparator.comparingInt(Score::getScore).reversed());
+        // Ordena os scores pelo menor número de tics
+        scores.sort(Comparator.comparingInt(Score::getScore));
         return scores;
     }
 
@@ -274,19 +293,20 @@ public class GameEngine implements Observer {
     // Chamado quando o jogador vence
     public void winGame() {
         gui.showMessage("YOU WON!", "Parabéns, você terminou o jogo!");
-        int pontos = calculateScore();
+        int totalScore = calculateScore();
         String playerName = JOptionPane.showInputDialog("Digite seu nome:");
         if (playerName == null || playerName.isEmpty()) {
             playerName = "Anônimo";
         }
-        saveScore(playerName, pontos);
+        saveScore(playerName, totalScore);
         showScores();
         gui.dispose();
+        System.exit(0); // Fecha o jogo
     }
 
     // Calcula a pontuação
     public int calculateScore() {
-        return levelTics; // Pontuação baseada nos 'ticks'
+        return totalTics;
     }
 	
 	
@@ -341,13 +361,16 @@ public class GameEngine implements Observer {
 			if (k == 'L') { // Exibe o ranking ao pressionar 'L'
 	            showScores();
 	        }
+			if (k == 'D') { // Pressionar 'D' apaga o ficheiro de scores
+			    deleteScoresFile();
+			    gui.setStatusMessage("Ficheiro de scores apagado.");
+			}
 		}
 								
 		
 		int t = ImageGUI.getInstance().getTicks();
 		while (lastTickProcessed < t) {
 			processTick();
-
 			
 			Point2D position = manel.getPosition(); 
 	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
@@ -422,7 +445,9 @@ public class GameEngine implements Observer {
 	        		//System.out.println("trap desativada");
 	        	}
 	        }
-	        
+
+			
+	        totalTics++;
 	        levelTics++; //rottenSteak
 	        checkSteakStatus();
 		
