@@ -6,12 +6,19 @@ import pt.iscte.poo.observer.Observer;
 import pt.iscte.poo.utils.Direction;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.stream.Collectors;
+
+import javax.swing.JOptionPane;
+
 import objects.Princess;
 import objects.Stairs;
 import objects.Trap;
@@ -50,6 +57,7 @@ public class GameEngine implements Observer {
 	
 	private List<GameElement> list = new ArrayList<>(); 
 	private Map<Point2D, List<GameElement>> objectsByPosition = new HashMap<>();
+	private static final String SCORE_FILE = "scores.txt";
 	
 	
 	private Manel manel;
@@ -209,21 +217,77 @@ public class GameEngine implements Observer {
 	
 	
 	public void foundPrincess() {
-		Gorilla gorilla = (Gorilla) list.stream()
-				.filter(element -> element instanceof Gorilla)
-				.findFirst()
-				.orElse(null);
-		if(gorilla == null || !gorilla.temVida()) {
-			GameEngine gameEngine = GameEngine.getInstance();
-			GameEngine.getInstance().getGui().setStatusMessage("Player Wins!");
-			GameEngine.getInstance().getGui().showMessage("End of Game!", "Player found Princess!");
-			gameEngine.restartGame();
-			GameEngine.getInstance().getGui().setStatusMessage("Game reseted!");
-		} else {
-			GameEngine.getInstance().getGui().setStatusMessage("Kill gorilla first!");
-			System.out.println("Kill gorilla first!");		
-		}
+	    Gorilla gorilla = (Gorilla) list.stream()
+	            .filter(element -> element instanceof Gorilla)
+	            .findFirst()
+	            .orElse(null);
+	    if (gorilla == null || !gorilla.temVida()) {
+	        winGame();
+	    } else {
+	        gui.setStatusMessage("Mate o gorila primeiro!");
+	    }
 	}
+	
+	// Método para salvar o score
+    public static void saveScore(String jogador, int score) {
+        List<Score> scores = getScoresFromFile(SCORE_FILE, new Score(jogador, score));
+        try (PrintWriter writer = new PrintWriter(new File(SCORE_FILE))) {
+            int count = 0;
+            for (Score s : scores) {
+                if (count >= 3) break; // Mantém apenas os 3 melhores scores
+                writer.println(s);
+                count++;
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Erro ao salvar score!");
+        }
+    }
+
+    // Método para buscar scores do arquivo
+    private static List<Score> getScoresFromFile(String file, Score novoScore) {
+        List<Score> scores = new ArrayList<>();
+        scores.add(novoScore);
+        try (Scanner scanner = new Scanner(new File(file))) {
+            while (scanner.hasNextLine()) {
+                scores.add(new Score(scanner.nextLine()));
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Arquivo de scores não encontrado. Será criado um novo.");
+        }
+        scores.sort(Comparator.comparingInt(Score::getScore).reversed());
+        return scores;
+    }
+
+    // Método para exibir os scores
+    public static void showScores() {
+        try (Scanner scanner = new Scanner(new File(SCORE_FILE))) {
+            StringBuilder scores = new StringBuilder("TOP SCORES:\n");
+            while (scanner.hasNextLine()) {
+                scores.append(scanner.nextLine()).append("\n");
+            }
+            ImageGUI.getInstance().showMessage("Ranking", scores.toString());
+        } catch (FileNotFoundException e) {
+            ImageGUI.getInstance().showMessage("Ranking", "Nenhum score encontrado.");
+        }
+    }
+
+    // Chamado quando o jogador vence
+    public void winGame() {
+        gui.showMessage("YOU WON!", "Parabéns, você terminou o jogo!");
+        int pontos = calculateScore();
+        String playerName = JOptionPane.showInputDialog("Digite seu nome:");
+        if (playerName == null || playerName.isEmpty()) {
+            playerName = "Anônimo";
+        }
+        saveScore(playerName, pontos);
+        showScores();
+        gui.dispose();
+    }
+
+    // Calcula a pontuação
+    public int calculateScore() {
+        return levelTics; // Pontuação baseada nos 'ticks'
+    }
 	
 	
 	
@@ -274,6 +338,9 @@ public class GameEngine implements Observer {
 				currentRoom.moveManel(direction);
 				checkManelColilsionWithDoor();
 			}
+			if (k == 'L') { // Exibe o ranking ao pressionar 'L'
+	            showScores();
+	        }
 		}
 								
 		
