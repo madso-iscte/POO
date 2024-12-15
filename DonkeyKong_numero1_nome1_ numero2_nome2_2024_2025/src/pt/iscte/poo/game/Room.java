@@ -127,16 +127,16 @@ public class Room{
 	                            room.setManelInitialPosition(position);
 	                        }
 	                    } else {
-	                        System.out.println("Caractere desconhecido na linha " + row + ", coluna " + col + ". Preenchido com chão.");
+	                        System.out.println("Unknown chars in row " + row + ", col " + col + ". Filled with floor.");
 	                    }
 	                } else {
-	                    System.out.println("Faltam caracteres na linha " + row + ". Preenchido com chão.");
+	                    System.out.println("Missing chars in row " + row + ". Filled with floor.");
 	                }
 	            }
 	            row++;
 	        }
 	        if (row < room.map.length) {
-	            System.out.println("Falta uma linha inteira no ficheiro. O jogo será abortado.");
+	            System.out.println("Missing an entire line in the file. The game will close.");
 	            GameEngine.getInstance().getGui().dispose();
 	            System.exit(1);
 	        }
@@ -155,7 +155,7 @@ public class Room{
                 int roomNumber = Integer.parseInt(parts[0]);
                 r.setLevelNumber(roomNumber);
             } catch (NumberFormatException e) {
-                System.err.println("Erro ao interpretar o número da sala.");
+                System.err.println("Error reading room number.");
             }
         }
 

@@ -52,7 +52,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 	
 	public void setPosition(Point2D newPosition) { 
 		this.position = newPosition; 
-		System.out.println("Nova posição de Manel definida: " + this.position); 
+		System.out.println("New Manel position defined: " + this.position); 
 	}
 	
 	public void setGameEngine(GameEngine gameEngine) {
@@ -86,7 +86,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 				gameEngine.restartGame();
 				vida = 100;
 			} else {
-				System.out.println("gameEngine nao definido");
+				System.out.println("gameEngine not defined");
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class Manel extends GameElement implements ImageTile, MovableObject, Intr
 			} else {
 				gorilla.takeDamage(damage);
 			}
-			System.out.println("Manel atacou Gorilla! Dano causado: " + damage);
+			System.out.println("Manel attacked Gorila. Damage caused: " + damage);
 		}
 	}
 	

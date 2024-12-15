@@ -58,6 +58,7 @@ public class GameEngine implements Observer {
 	private List<GameElement> list = new ArrayList<>(); 
 	private Map<Point2D, List<GameElement>> objectsByPosition = new HashMap<>();
 	private static final String SCORE_FILE = "scores.txt";
+	private List<Bomb> bombs = new ArrayList<>();
 	
 	
 	private Manel manel;
@@ -158,7 +159,7 @@ public class GameEngine implements Observer {
 	    gui.registerObserver(this);
 	    gui.go();
 	    //System.out.println("GUI inicializada!");
-	    Room initialRoom = Room.readLevel(Inicial_room); // Lê a sala inicial
+	    Room initialRoom = Room.readLevel(Inicial_room); 
 	    createLevel(initialRoom);
 	    gui.setStatusMessage("DonkeyKong! Lives: 3!");
 	    gui.update();
@@ -170,7 +171,7 @@ public class GameEngine implements Observer {
 		 this.currentRoom = room;
 		 room.setEngine(this);
 		 for (GameElement element : room.getList()) {
-		     addGameElement(element); // Adiciona ao ImageGUI
+		     addGameElement(element); 
 		 }
 		 if(manel!=null) {
 			 manel.setVida(manel.getVida());
@@ -192,7 +193,7 @@ public class GameEngine implements Observer {
 	    
 	    manel.setVida(vidaAtual);
 	    
-	    levelTics = 0; // Reinicia os ticks do nível, mas não os totais
+	    levelTics = 0; 
 	}
 	
 	public void resetManelPosition() {
@@ -229,39 +230,39 @@ public class GameEngine implements Observer {
 	    if (gorilla == null || !gorilla.temVida()) {
 	        winGame();
 	    } else {
-	        gui.setStatusMessage("Mate o gorila primeiro!");
+	        gui.setStatusMessage("Kill the Gorilla first!");
 	    }
 	}
 	
 	public static void deleteScoresFile() {
-	    File file = new File("scores.txt"); // Caminho do ficheiro
+	    File file = new File("scores.txt"); 
 	    if (file.exists()) {
 	        if (file.delete()) {
-	            System.out.println("Ficheiro scores.txt apagado com sucesso!");
+	            System.out.println("Scores.txt file sucessfully deleted!");
 	        } else {
-	            System.err.println("Erro ao apagar o ficheiro scores.txt!");
+	            System.err.println("Error to delete Scores.txt!");
 	        }
 	    } else {
-	        System.out.println("Ficheiro scores.txt não existe.");
+	        System.out.println("Scores.txt doesn't exist.");
 	    }
 	}
 	
-	// Método para salvar o score
+	
     public static void saveScore(String jogador, int score) {
         List<Score> scores = getScoresFromFile(SCORE_FILE, new Score(jogador, score));
         try (PrintWriter writer = new PrintWriter(new File(SCORE_FILE))) {
             int count = 0;
             for (Score s : scores) {
-                if (count >= 3) break; // Mantém apenas os 3 melhores scores
+                if (count >= 3) break; 
                 writer.println(s);
                 count++;
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Erro ao salvar score!");
+            System.err.println("Error to save the score!");
         }
     }
 
-    // Método para buscar scores do arquivo
+    
     private static List<Score> getScoresFromFile(String file, Score novoScore) {
         List<Score> scores = new ArrayList<>();
         scores.add(novoScore); // Adiciona o novo score
@@ -270,14 +271,13 @@ public class GameEngine implements Observer {
                 scores.add(new Score(scanner.nextLine()));
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Arquivo de scores não encontrado. Será criado um novo.");
+            System.err.println("Scores archive not foung. A new one will be created.");
         }
-        // Ordena os scores pelo menor número de tics
         scores.sort(Comparator.comparingInt(Score::getScore));
         return scores;
     }
 
-    // Método para exibir os scores
+    
     public static void showScores() {
         try (Scanner scanner = new Scanner(new File(SCORE_FILE))) {
             StringBuilder scores = new StringBuilder("TOP SCORES:\n");
@@ -286,25 +286,25 @@ public class GameEngine implements Observer {
             }
             ImageGUI.getInstance().showMessage("Ranking", scores.toString());
         } catch (FileNotFoundException e) {
-            ImageGUI.getInstance().showMessage("Ranking", "Nenhum score encontrado.");
+            ImageGUI.getInstance().showMessage("Ranking", "None score found.");
         }
     }
 
-    // Chamado quando o jogador vence
+    
     public void winGame() {
-        gui.showMessage("YOU WON!", "Parabéns, você terminou o jogo!");
+        gui.showMessage("YOU WON!", "Congrats, you won the game!");
         int totalScore = calculateScore();
-        String playerName = JOptionPane.showInputDialog("Digite seu nome:");
+        String playerName = JOptionPane.showInputDialog("Write your name:");
         if (playerName == null || playerName.isEmpty()) {
-            playerName = "Anônimo";
+            playerName = "Anonimous";
         }
         saveScore(playerName, totalScore);
         showScores();
         gui.dispose();
-        System.exit(0); // Fecha o jogo
+        System.exit(0); 
     }
 
-    // Calcula a pontuação
+    
     public int calculateScore() {
         return totalTics;
     }
@@ -343,119 +343,144 @@ public class GameEngine implements Observer {
 		}
 	
 	
+	
 	@Override
 	public void update(Observed source) {
-		
-		if (ImageGUI.getInstance().wasKeyPressed()) {
-			int k = ImageGUI.getInstance().keyPressed();
-			System.out.println("Keypressed " + k);
-			 if (k == 66) {
-		            manel.dropBomb();
-		        }
-			if (Direction.isDirection(k)) {
-				System.out.println("Direction! ");
-				Direction direction = Direction.directionFor(k);				
-				currentRoom.moveManel(direction);
-				checkManelColilsionWithDoor();
-			}
-			if (k == 'L') { // Exibe o ranking ao pressionar 'L'
-	            showScores();
-	        }
-			if (k == 'D') { // Pressionar 'D' apaga o ficheiro de scores
-			    deleteScoresFile();
-			    gui.setStatusMessage("Ficheiro de scores apagado.");
-			}
-		}
-								
-		
-		int t = ImageGUI.getInstance().getTicks();
+	    handleKeyPresses(); // Gerencia teclas pressionadas
+
+	    int t = ImageGUI.getInstance().getTicks();
 	    while (lastTickProcessed < t) {
-	        processTick();
-	        
-	        Point2D position = manel.getPosition(); 
-	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
-	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
+	        processTick();         // Processa lógica específica do "tick"
+	           // Incrementa o contador de tics
 
-	        if (!(elementBelow instanceof Stairs)) {
-	            Direction down = Direction.DOWN;  
-	            currentRoom.moveManel(down); 
-	        }
-	        
-	        
-			List<Gorilla> gorillas = list.stream()
-					.filter(element -> element instanceof Gorilla)
-					.map(element -> (Gorilla) element)
-					.collect(Collectors.toList());
-			for(Gorilla gorilla : gorillas) {
-				if(gorilla.temVida()) {
-					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<40) {
-						//gorilla.lauchFire();
-					}
-				}
-			}
-			
-			List<Bat> bats = list.stream()
-					.filter(element -> element instanceof Bat)
-					.map(element -> (Bat) element)
-					.collect(Collectors.toList());
-			for(Bat bat : bats) {
-				//bat.moveRandomly();
-			}
-			
-			List<Bomb> bombs = currentRoom.getList().stream()
-					.filter(element -> element instanceof Bomb)
-					.map(element -> (Bomb) element)
-					.collect(Collectors.toList());
-			for(Bomb bomb : bombs) {
-				bomb.tick();
-				bomb.checkCollisionWithEnemies();
-				bomb.explodeManel();
-			}
-			
-			
-		
-			List<GameElement> fireballs = currentRoom.getList().stream()
-					.filter(element -> element instanceof Fire)
-					.collect(Collectors.toList());
-			for(GameElement fireball : fireballs) {
-				Fire fire = (Fire) fireball;
-				fire.checkCollisionWithManel();
-				currentRoom.updateFire(fire);
-			}
-			
-			List<GameElement> traps = currentRoom.getList().stream()
-	                .filter(element -> element instanceof Trap)
-	                .collect(Collectors.toList());
-	        for (GameElement trap : traps) {
-	            ((Trap) trap).checkCollisionWithManel(manel);
-	        }
-	        
-	        List<GameElement> trapWalls = currentRoom.getList().stream()
-	        		.filter(element -> element instanceof TrapWall)
-	        		.collect(Collectors.toList());
-	        for(GameElement trapWall : trapWalls) {
-	        	TrapWall tw = (TrapWall) trapWall;
-	        	Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
-	        	if (tw.getPosition().equals(positionBelowManel)) {
-	        		tw.interact(manel);
-	        		//System.out.println("trap ativa");
-	        	} else { 
-	        		tw.resetIfManelLeft(manel); 
-	        		//System.out.println("trap desativada");
-	        	}
-	        }
+	        handleManelFall();     // Lógica para queda do Manel
+	        updateGorillas();      // Atualiza os movimentos dos Gorillas
+	        updateBats();          // Atualiza os morcegos
+	        updateBombs();         // Atualiza as bombas
+	        updateFireballs();     // Atualiza bolas de fogo
+	        updateTraps();         // Atualiza as armadilhas
+	        updateTrapWalls();     // Atualiza paredes armadilha
 
-			
 	        totalTics++;
-	        levelTics++; //rottenSteak
-	        checkSteakStatus();
-		
-		}
-		ImageGUI.getInstance().update();
+	        levelTics++; // Incrementa o contador do nível
+	        checkSteakStatus();    // Verifica o estado do "Steak" (ou qualquer lógica especial)
+	    }
+
+	    ImageGUI.getInstance().update(); // Atualiza a interface gráfica
+	}
+	
+//----------------------------------Funções Auxiliares ao Update-------------------------------------------
+	private void handleKeyPresses() {
+	    if (ImageGUI.getInstance().wasKeyPressed()) {
+	        int k = ImageGUI.getInstance().keyPressed();
+	        System.out.println("Keypressed " + k);
+
+	        if (k == 66) {
+	            manel.dropBomb(); // Manel larga uma bomba
+	        }
+	        if (Direction.isDirection(k)) {
+	            System.out.println("Direction!");
+	            Direction direction = Direction.directionFor(k);
+	            currentRoom.moveManel(direction); // Move o Manel
+	            checkManelColilsionWithDoor();   // Verifica colisão com portas
+	        }
+	        if (k == 'L') {
+	            showScores(); // Exibe o ranking
+	        }
+	        if (k == 'D') {
+	            deleteScoresFile();
+	            gui.setStatusMessage("Ficheiro de scores apagado.");
+	        }
+	    }
 	}
 
-	private List<Bomb> bombs = new ArrayList<>();
+	private void handleManelFall() {
+	    Point2D position = manel.getPosition();
+	    Point2D nextPosition = position.plus(Direction.DOWN.asVector());
+	    GameElement elementBelow = currentRoom.getElementAt(nextPosition);
+
+	    if (!(elementBelow instanceof Stairs)) {
+	        currentRoom.moveManel(Direction.DOWN);
+	    }
+	}
+
+	private void updateGorillas() {
+	    List<Gorilla> gorillas = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Gorilla)
+	        .map(element -> (Gorilla) element)
+	        .collect(Collectors.toList());
+
+	    for (Gorilla gorilla : gorillas) {
+	        if (gorilla.temVida()) {
+	            gorilla.moveRandomly(); 
+	            if (new Random().nextInt(100) < 40) {
+	                 gorilla.lauchFire(); 
+	            }
+	        }
+	    }
+	}
+
+	private void updateBats() {
+	    List<Bat> bats = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Bat)
+	        .map(element -> (Bat) element)
+	        .collect(Collectors.toList());
+
+	    for (Bat bat : bats) {
+	        bat.moveRandomly();
+	    }
+	}
+
+	private void updateBombs() {
+	    List<Bomb> bombs = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Bomb)
+	        .map(element -> (Bomb) element)
+	        .collect(Collectors.toList());
+
+	    for (Bomb bomb : bombs) {
+	        bomb.tick();
+	        bomb.checkCollisionWithEnemies();
+	        bomb.explodeManel();
+	    }
+	}
+
+	private void updateFireballs() {
+	    List<GameElement> fireballs = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Fire)
+	        .collect(Collectors.toList());
+
+	    for (GameElement fireball : fireballs) {
+	        Fire fire = (Fire) fireball;
+	        fire.checkCollisionWithManel();
+	        currentRoom.updateFire(fire);
+	    }
+	}
+
+	private void updateTraps() {
+	    List<GameElement> traps = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Trap)
+	        .collect(Collectors.toList());
+
+	    for (GameElement trap : traps) {
+	        ((Trap) trap).checkCollisionWithManel(manel);
+	    }
+	}
+
+	private void updateTrapWalls() {
+	    List<GameElement> trapWalls = currentRoom.getList().stream()
+	        .filter(element -> element instanceof TrapWall)
+	        .collect(Collectors.toList());
+
+	    for (GameElement trapWall : trapWalls) {
+	        TrapWall tw = (TrapWall) trapWall;
+	        Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
+	        if (tw.getPosition().equals(positionBelowManel)) {
+	            tw.interact(manel);
+	        } else {
+	            tw.resetIfManelLeft(manel);
+	        }
+	    }
+	}
 
 	public void addBomb(Bomb bomb) {
 	    bombs.add(bomb);

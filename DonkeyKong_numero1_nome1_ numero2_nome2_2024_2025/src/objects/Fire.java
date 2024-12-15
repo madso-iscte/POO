@@ -64,7 +64,7 @@ public class Fire extends GameElement implements ImageTile, Intransposable, Mova
 			Manel manel = (Manel) elementAtPosition;
 			manel.setVida(manel.getVida()-this.damage);
 			GameEngine.getInstance().getGui().setStatusMessage("Manel was attacked! Life " + manel.getVida() + "/100");
-			System.out.println("Manel atingido pela bola de fogo! Vida restante: " + manel.getVida());
+			System.out.println("Manel attacked by fire ball! Life: " + manel.getVida());
 			
 			GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(), this);
 			GameEngine.getInstance().getGui().removeImage(this);

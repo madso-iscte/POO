@@ -134,7 +134,11 @@ public class Bomb extends GameElement implements Interactable {
     					GameEngine.getInstance().getGui().setStatusMessage("Bomb hit Bat!"); 
     					currentRoom.removeElementAt(target, element);
     					hitSomething = true;
-    				} 
+    				} else if (element instanceof Trap) { 
+    					GameEngine.getInstance().getGui().setStatusMessage("Bomb hit Trap!"); 
+    					currentRoom.removeElementAt(target, element);
+    					hitSomething = true;
+    				}
     			} 		 
     		} 
     	}

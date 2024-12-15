@@ -64,7 +64,7 @@ public class Steak extends GameElement implements ImageTile, Interactable{
 	
 		GameEngine.getInstance().getCurrentRoom().removeElementAt(this.getPosition(),this);
 		
-		System.out.println("Vida atual " + manel.getVida());
+		System.out.println("Life:" + manel.getVida());
 	}
 	
 	
