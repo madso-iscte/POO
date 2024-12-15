@@ -345,115 +345,140 @@ public class GameEngine implements Observer {
 	
 	@Override
 	public void update(Observed source) {
-		
-		if (ImageGUI.getInstance().wasKeyPressed()) {
-			int k = ImageGUI.getInstance().keyPressed();
-			System.out.println("Keypressed " + k);
-			 if (k == 66) {
-		            manel.dropBomb();
-		        }
-			if (Direction.isDirection(k)) {
-				System.out.println("Direction! ");
-				Direction direction = Direction.directionFor(k);				
-				currentRoom.moveManel(direction);
-				checkManelColilsionWithDoor();
-			}
-			if (k == 'L') { // Exibe o ranking ao pressionar 'L'
-	            showScores();
-	        }
-			if (k == 'D') { // Pressionar 'D' apaga o ficheiro de scores
-			    deleteScoresFile();
-			    gui.setStatusMessage("Ficheiro de scores apagado.");
-			}
-		}
-								
-		
-		int t = ImageGUI.getInstance().getTicks();
-		while (lastTickProcessed < t) {
-			processTick();
-			
-			Point2D position = manel.getPosition(); 
-	        Point2D nextPosition = position.plus(Direction.DOWN.asVector()); 
-	        GameElement elementBelow = currentRoom.getElementAt(nextPosition);
 
-	        if (!(elementBelow instanceof Stairs)) {
-	            Direction down = Direction.DOWN;  
-	            currentRoom.moveManel(down); 
-	        }
-	        
-	        
-			List<Gorilla> gorillas = list.stream()
-					.filter(element -> element instanceof Gorilla)
-					.map(element -> (Gorilla) element)
-					.collect(Collectors.toList());
-			for(Gorilla gorilla : gorillas) {
-				if(gorilla.temVida()) {
-					gorilla.moveRandomly();
-					if(new Random().nextInt(100)<40) {
-						//gorilla.lauchFire();
-					}
-				}
-			}
-			
-			List<Bat> bats = list.stream()
-					.filter(element -> element instanceof Bat)
-					.map(element -> (Bat) element)
-					.collect(Collectors.toList());
-			for(Bat bat : bats) {
-				//bat.moveRandomly();
-			}
-			
-			List<Bomb> bombs = currentRoom.getList().stream()
-					.filter(element -> element instanceof Bomb)
-					.map(element -> (Bomb) element)
-					.collect(Collectors.toList());
-			for(Bomb bomb : bombs) {
-				bomb.tick();
-				bomb.checkCollisionWithEnemies();
-				bomb.explodeManel();
-			}
-			
-			
-		
-			List<GameElement> fireballs = currentRoom.getList().stream()
-					.filter(element -> element instanceof Fire)
-					.collect(Collectors.toList());
-			for(GameElement fireball : fireballs) {
-				Fire fire = (Fire) fireball;
-				fire.checkCollisionWithManel();
-				currentRoom.updateFire(fire);
-			}
-			
-			List<GameElement> traps = currentRoom.getList().stream()
-	                .filter(element -> element instanceof Trap)
-	                .collect(Collectors.toList());
-	        for (GameElement trap : traps) {
-	            ((Trap) trap).checkCollisionWithManel(manel);
-	        }
-	        
-	        List<GameElement> trapWalls = currentRoom.getList().stream()
-	        		.filter(element -> element instanceof TrapWall)
-	        		.collect(Collectors.toList());
-	        for(GameElement trapWall : trapWalls) {
-	        	TrapWall tw = (TrapWall) trapWall;
-	        	Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
-	        	if (tw.getPosition().equals(positionBelowManel)) {
-	        		tw.interact(manel);
-	        		//System.out.println("trap ativa");
-	        	} else { 
-	        		tw.resetIfManelLeft(manel); 
-	        		//System.out.println("trap desativada");
-	        	}
-	        }
+	    handleKeyPresses();  // Gerencia teclas pressionadas
 
-			
+	    int t = ImageGUI.getInstance().getTicks();
+	    while (lastTickProcessed < t) {
+	        processTick();
+	        handleManelFall();  // Gerencia queda de Manel
+
+	        updateGorillas();   // Atualiza os Gorillas
+	        updateBats();       // Atualiza os morcegos
+	        updateBombs();      // Atualiza as bombas
+	        updateFireballs();  // Atualiza bolas de fogo
+	        updateTraps();      // Atualiza as armadilhas
+	        updateTrapWalls();  // Atualiza paredes armadilha
+
 	        totalTics++;
-	        levelTics++; //rottenSteak
+	        levelTics++;
 	        checkSteakStatus();
-		
-		}
-		ImageGUI.getInstance().update();
+	    }
+	    ImageGUI.getInstance().update(); // Atualiza a GUI
 	}
+
+	private void handleKeyPresses() {
+	    if (ImageGUI.getInstance().wasKeyPressed()) {
+	        int k = ImageGUI.getInstance().keyPressed();
+	        System.out.println("Keypressed " + k);
+
+	        if (k == 66) {
+	            manel.dropBomb();
+	        }
+	        if (Direction.isDirection(k)) {
+	            System.out.println("Direction!");
+	            Direction direction = Direction.directionFor(k);
+	            currentRoom.moveManel(direction);
+	            checkManelColilsionWithDoor();
+	        }
+	        if (k == 'L') {
+	            showScores(); // Exibe o ranking
+	        }
+	        if (k == 'D') {
+	            deleteScoresFile();
+	            gui.setStatusMessage("Ficheiro de scores apagado.");
+	        }
+	    }
+	}
+
+	private void handleManelFall() {
+	    Point2D position = manel.getPosition();
+	    Point2D nextPosition = position.plus(Direction.DOWN.asVector());
+	    GameElement elementBelow = currentRoom.getElementAt(nextPosition);
+
+	    if (!(elementBelow instanceof Stairs)) {
+	        currentRoom.moveManel(Direction.DOWN);
+	    }
+	}
+
+	private void updateGorillas() {
+	    List<Gorilla> gorillas = list.stream()
+	        .filter(element -> element instanceof Gorilla)
+	        .map(element -> (Gorilla) element)
+	        .collect(Collectors.toList());
+
+	    for (Gorilla gorilla : gorillas) {
+	        if (gorilla.temVida()) {
+	            gorilla.moveRandomly();
+	            if (new Random().nextInt(100) < 40) {
+	                // gorilla.lauchFire();  // Lógica de lançar bolas de fogo (a ser implementada)
+	            }
+	        }
+	    }
+	}
+
+	private void updateBombs() {
+	    List<Bomb> bombs = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Bomb)
+	        .map(element -> (Bomb) element)
+	        .collect(Collectors.toList());
+
+	    for (Bomb bomb : bombs) {
+	        bomb.tick();
+	        bomb.checkCollisionWithEnemies();
+	        bomb.explodeManel();
+	    }
+	}
+
+	private void updateFireballs() {
+	    List<GameElement> fireballs = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Fire)
+	        .collect(Collectors.toList());
+
+	    for (GameElement fireball : fireballs) {
+	        Fire fire = (Fire) fireball;
+	        fire.checkCollisionWithManel();
+	        currentRoom.updateFire(fire);
+	    }
+	}
+
+	private void updateTraps() {
+	    List<GameElement> traps = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Trap)
+	        .collect(Collectors.toList());
+
+	    for (GameElement trap : traps) {
+	        ((Trap) trap).checkCollisionWithManel(manel);
+	    }
+	}
+
+	private void updateTrapWalls() {
+	    List<GameElement> trapWalls = currentRoom.getList().stream()
+	        .filter(element -> element instanceof TrapWall)
+	        .collect(Collectors.toList());
+
+	    for (GameElement trapWall : trapWalls) {
+	        TrapWall tw = (TrapWall) trapWall;
+	        Point2D positionBelowManel = manel.getPosition().plus(Direction.DOWN.asVector());
+	        if (tw.getPosition().equals(positionBelowManel)) {
+	            tw.interact(manel);
+	        } else {
+	            tw.resetIfManelLeft(manel);
+	        }
+	    }
+	}
+
+	private void updateBats() {
+	    List<Bat> bats = currentRoom.getList().stream()
+	        .filter(element -> element instanceof Bat)
+	        .map(element -> (Bat) element)
+	        .collect(Collectors.toList());
+
+	    for (Bat bat : bats) {
+	        bat.moveRandomly(); // Lógica de movimento aleatório
+	    }
+	}
+
 
 	private List<Bomb> bombs = new ArrayList<>();
 

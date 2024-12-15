@@ -90,40 +90,46 @@ public class Room{
 
 	
 	public static Room readLevel(String filename) {
-		Room room = new Room(filename, GameEngine.getInstance());
-        try (Scanner scanner = new Scanner(new File(filename))) {
-            int row = 0;
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("#")) {
-                	readConfiguration(line.substring(1),room);
-                    continue;
-                }
-                for (int col = 0; col < line.length(); col++) {
-                	if (row < room.map.length && col < room.map[0].length) {
-                		Point2D position = new Point2D(col, row);
-                		GameElement floor = new Floor(position);
-                		room.list.add(floor); 
-                		char c = line.charAt(col);
-                		GameElement element = GameElement.fromChar(c, room, col, row);
-                		if (element != null) {
-                			room.map[row][col] = element;
-                			room.list.add(element);
-                			if(element instanceof Manel) {
-                				room.setManelInitialPosition(position);
-                			}
-                		}
-                	} else {
-                		System.out.println("fora dos limites");
-                	}
-                }
-                row++;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return room;
-    }
+	    Room room = null;
+	    while (room == null) { // Continua pedindo até obter um arquivo válido
+	        try (Scanner scanner = new Scanner(new File(filename))) {
+	            room = new Room(filename, GameEngine.getInstance());
+	            int row = 0;
+	            while (scanner.hasNextLine()) {
+	                String line = scanner.nextLine();
+	                if (line.startsWith("#")) {
+	                    readConfiguration(line.substring(1), room);
+	                    continue;
+	                }
+	                for (int col = 0; col < line.length(); col++) {
+	                    if (row < room.map.length && col < room.map[0].length) {
+	                        Point2D position = new Point2D(col, row);
+	                        GameElement floor = new Floor(position);
+	                        room.list.add(floor);
+	                        char c = line.charAt(col);
+	                        GameElement element = GameElement.fromChar(c, room, col, row);
+	                        if (element != null) {
+	                            room.map[row][col] = element;
+	                            room.list.add(element);
+	                            if (element instanceof Manel) {
+	                                room.setManelInitialPosition(position);
+	                            }
+	                        }
+	                    } else {
+	                        System.out.println("fora dos limites");
+	                    }
+	                }
+	                row++;
+	            }
+	        } catch (FileNotFoundException e) {
+	            System.out.println("Ficheiro não encontrado. Insira o nome do ficheiro:");
+	            Scanner input = new Scanner(System.in);
+	            filename = input.nextLine();
+	        }
+	    }
+	    return room;
+	}
+
 
 
 
